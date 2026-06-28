@@ -1,0 +1,3285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Medprice web-site</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --teal:      #0D9488;
+    --teal-dark: #0B7C72;
+    --teal-soft: #E6FBF8;
+    --cyan-soft: #EFF9FF;
+    --ink:       #16222E;
+    --slate:     #6B7B8C;
+    --bg:        #FFFFFF;
+    --surface:   #F7FAFC;
+    --border:    #E7EDF2;
+    --gold:      #F5A623;
+    --red:       #E5484D;
+    --green:     #1AAB7E;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding-bottom: 76px; /* room for bottom nav */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: var(--teal);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 16px;
+    flex-shrink: 0;
+  }
+  .logo-text { color: var(--ink); }
+  .logo-text span { color: var(--teal); }
+
+  .city-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 12px 7px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .city-pill select {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* desktop-only top nav links */
+  .top-links { display: none; gap: 6px; }
+  .top-link {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--slate);
+    transition: all .15s;
+    font-family: 'Inter', sans-serif;
+  }
+  .top-link.active, .top-link:hover { background: var(--teal-soft); color: var(--teal-dark); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    padding: 28px 16px 26px;
+    text-align: center;
+    overflow: hidden;
+    background:
+      radial-gradient(480px 280px at 85% -10%, var(--teal-soft) 0%, transparent 70%),
+      radial-gradient(420px 260px at 10% 100%, var(--cyan-soft) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero-eyebrow .dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  .hero h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(24px, 6vw, 38px);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 10px;
+    letter-spacing: -.5px;
+  }
+  .hero h1 em { font-style: normal; color: var(--teal); }
+  .hero-sub { color: var(--slate); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+
+  /* Search bar */
+  .search-wrap { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+  .search-row {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(13,148,136,.12);
+    border: 1px solid var(--border);
+  }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 16px 18px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .search-input::placeholder { color: #A7B4C0; }
+  .search-btn {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 15px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s;
+  }
+  .search-btn:active { background: var(--teal-dark); }
+
+  .hero-tags { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .hero-tag {
+    background: var(--surface);
+    color: var(--slate);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .hero-tag:active, .hero-tag:hover { background: var(--teal-soft); color: var(--teal-dark); border-color: var(--teal-soft); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    -webkit-overflow-scrolling: touch;
+  }
+  .stats-bar::-webkit-scrollbar { display: none; }
+  .stat {
+    flex: 0 0 auto;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 92px;
+  }
+  .stat-num { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; color: var(--teal-dark); }
+  .stat-label { font-size: 11px; color: var(--slate); margin-top: 2px; }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .layout { display: block; }
+
+  /* ── AI PANEL ── */
+  .ai-panel {
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .ai-header {
+    background: var(--teal-soft);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ai-icon {
+    width: 34px; height: 34px;
+    background: var(--teal);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .ai-title { color: var(--ink); font-weight: 700; font-size: 14px; }
+  .ai-subtitle { color: var(--slate); font-size: 12px; margin-top: 1px; }
+  .ai-body { padding: 14px 16px; }
+  .ai-messages { max-height: 260px; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .ai-msg { display: flex; gap: 8px; align-items: flex-start; }
+  .ai-msg.user { flex-direction: row-reverse; }
+  .msg-avatar {
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    color: var(--slate);
+    font-weight: 700;
+  }
+  .msg-avatar.bot { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .msg-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .ai-msg.bot .msg-bubble { background: var(--surface); color: var(--ink); border-radius: 4px 12px 12px 12px; }
+  .ai-msg.user .msg-bubble { background: var(--teal); color: #fff; border-radius: 12px 4px 12px 12px; }
+  .ai-input-row { display: flex; gap: 8px; }
+  .ai-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    color: var(--ink);
+    background: var(--surface);
+    min-width: 0;
+  }
+  .ai-input:focus { border-color: var(--teal); background: var(--bg); }
+  .ai-send {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ai-send:active { background: var(--teal-dark); }
+  .ai-send:disabled { opacity: .5; cursor: not-allowed; }
+  .ai-thinking { display: flex; gap: 4px; align-items: center; padding: 8px 0; }
+  .ai-thinking span { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: bounce .8s infinite; }
+  .ai-thinking span:nth-child(2) { animation-delay: .15s; }
+  .ai-thinking span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%,80%,100%{transform:scale(.8);opacity:.5} 40%{transform:scale(1.2);opacity:1} }
+
+  /* ── RESULTS HEADER ── */
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .results-count { font-size: 13px; color: var(--slate); }
+  .results-count strong { color: var(--ink); }
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .icon-btn.active-filter { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-soft); }
+
+  .sort-select {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 10px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    background: var(--bg);
+    color: var(--ink);
+    cursor: pointer;
+    max-width: 130px;
+  }
+
+  /* ── FILTERS DRAWER ── */
+  .filters-overlay {
+    position: fixed; inset: 0;
+    background: rgba(22,34,46,.35);
+    z-index: 240;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+  }
+  .filters-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .filters-panel {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    border-radius: 20px 20px 0 0;
+    padding: 8px 18px 18px;
+    z-index: 250;
+    max-height: 82vh;
+    overflow-y: auto;
+    box-shadow: 0 -12px 40px rgba(22,34,46,.18);
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .filters-panel.open { transform: translateY(0); }
+
+  .filters-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 10px auto 14px; }
+  .filters-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .filters-title { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); }
+  .filters-close { background: var(--surface); border: none; width: 32px; height: 32px; border-radius: 10px; font-size: 16px; color: var(--slate); cursor: pointer; }
+
+  .filter-group { margin-bottom: 20px; }
+  .filter-group-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+  .filter-chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-chip {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    background: var(--bg);
+    color: var(--slate);
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-chip.active { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); }
+
+  .price-range { display: flex; align-items: center; gap: 10px; }
+  .price-input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    color: var(--ink);
+    background: var(--surface);
+  }
+  .price-input:focus { border-color: var(--teal); background: var(--bg); }
+  .price-sep { color: var(--slate); font-size: 13px; }
+
+  .rating-stars { display: flex; gap: 6px; }
+  .star-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #C7D2DB;
+    transition: all .1s;
+    padding: 8px 12px;
+  }
+  .star-btn.active { color: var(--gold); border-color: var(--gold); background: #FFF8E8; }
+
+  .checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); cursor: pointer; padding: 8px 0; }
+  .checkbox-label input { accent-color: var(--teal); width: 18px; height: 18px; }
+
+  .apply-btn {
+    width: 100%;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    margin-top: 6px;
+  }
+  .apply-btn:active { background: var(--teal-dark); }
+
+  /* ── CLINIC CARD ── */
+  .clinic-card {
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .clinic-card.best-value { border-color: var(--teal); box-shadow: 0 4px 20px rgba(13,148,136,.08); }
+  .best-badge {
+    position: absolute;
+    top: -10px; right: 14px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 10px;
+    letter-spacing: .2px;
+  }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .clinic-info { flex: 1; min-width: 0; }
+  .clinic-name { font-family: 'Manrope', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+  .clinic-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #FFF8E8;
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
+  .rating .star { color: var(--gold); font-size: 13px; }
+  .review-count { color: var(--slate); font-weight: 500; }
+  .district-badge {
+    background: var(--surface);
+    color: var(--slate);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 8px;
+  }
+  .work-hours { font-size: 12px; color: var(--slate); display: flex; align-items: center; gap: 5px; font-weight: 500; }
+  .open-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
+  .closed-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); display: inline-block; }
+  .kaz-badge { font-size: 11px; color: var(--teal-dark); font-weight: 700; background: var(--teal-soft); padding: 3px 8px; border-radius: 8px; }
+
+  .price-block { text-align: right; flex-shrink: 0; }
+  .price-main { font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); line-height: 1; }
+  .price-currency { font-size: 13px; font-weight: 700; color: var(--teal-dark); }
+  .price-old { font-size: 12px; color: #B0BCC8; text-decoration: line-through; margin-top: 3px; }
+  .price-label { font-size: 11px; color: var(--slate); margin-top: 3px; max-width: 130px; }
+
+  .card-services { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .services-label { font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .service-rows { display: flex; flex-direction: column; gap: 7px; }
+  .service-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; gap: 10px; }
+  .service-name { color: var(--slate); }
+  .service-price { font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .service-price.cheapest { color: var(--green); }
+  .service-price.expensive { color: var(--red); }
+
+  .card-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .btn-primary {
+    flex: 1;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary:active { background: var(--teal-dark); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .btn-secondary.is-active { background: var(--teal-soft); border-color: var(--teal); color: var(--teal-dark); }
+
+  /* ── COMPARE BAR ── */
+  .compare-bar {
+    position: fixed;
+    bottom: 76px; left: 0; right: 0;
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 200;
+    transform: translateY(120%);
+    transition: transform .3s;
+    border-radius: 14px 14px 0 0;
+    margin: 0 8px;
+  }
+  .compare-bar.visible { transform: translateY(0); }
+  .compare-info { font-size: 13px; }
+  .compare-info strong { color: #5EEAD4; }
+  .compare-actions { display: flex; gap: 8px; }
+  .compare-go {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .compare-clear { background: rgba(255,255,255,.1); color: #fff; border: none; padding: 9px 12px; border-radius: 9px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; }
+
+  /* ── COMPARE VIEW ── */
+  .compare-view { display: none; }
+  .compare-view.active { display: block; }
+  .compare-table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--border); }
+  .compare-table { width: 100%; border-collapse: collapse; background: var(--bg); min-width: 480px; }
+  .compare-table th { background: var(--surface); padding: 12px 14px; text-align: left; font-size: 12.5px; font-weight: 700; color: var(--slate); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .compare-table td { padding: 12px 14px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: top; white-space: nowrap; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table .col-clinic { font-weight: 700; color: var(--ink); }
+  .compare-winner { background: var(--teal-soft) !important; }
+  .win-badge { display: inline-block; background: var(--teal); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-left: 6px; }
+  .compare-title { font-family: 'Manrope', sans-serif; font-size: 19px; font-weight: 800; margin-bottom: 14px; color: var(--ink); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state { text-align: center; padding: 48px 16px; }
+  .empty-icon { font-size: 42px; margin-bottom: 14px; }
+  .empty-title { font-family: 'Manrope', sans-serif; font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; color: var(--slate); }
+
+  /* ── LOADING ── */
+  .loading-skeleton { animation: shimmer 1.5s infinite; background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%); background-size: 200% 100%; border-radius: 8px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .skel-line { height: 14px; margin-bottom: 8px; }
+  .skel-card { background: var(--bg); border-radius: 16px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+
+  .no-results { display: none; }
+
+  /* ── BOOKING MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(22,34,46,.4);
+    z-index: 340;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .booking-modal {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    border-radius: 20px 20px 0 0;
+    padding: 8px 20px 22px;
+    z-index: 350;
+    max-height: 86vh;
+    overflow-y: auto;
+    box-shadow: 0 -12px 40px rgba(22,34,46,.18);
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .booking-modal.open { transform: translateY(0); }
+  .booking-handle { width: 36px; height: 4px; background: var(--border); border-radius: 4px; margin: 10px auto 16px; }
+
+  .booking-clinic-name { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .booking-service-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--teal-soft); border-radius: 12px; padding: 12px 14px; margin: 14px 0;
+  }
+  .booking-service-name { font-size: 13.5px; color: var(--teal-dark); font-weight: 600; }
+  .booking-service-price { font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; color: var(--teal-dark); }
+
+  .booking-info-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .booking-info-row:last-of-type { border-bottom: none; }
+  .booking-info-icon { font-size: 17px; flex-shrink: 0; width: 22px; text-align: center; }
+  .booking-info-text { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+  .booking-info-label { font-size: 11px; color: var(--slate); text-transform: uppercase; letter-spacing: .4px; font-weight: 700; margin-bottom: 2px; }
+
+  .booking-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .booking-btn {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+  .booking-btn.call { background: var(--teal); color: #fff; }
+  .booking-btn.instagram { background: linear-gradient(135deg, #833AB4, #FD1D1D, #F77737); color: #fff; }
+  .booking-btn.maps { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
+  .booking-maps-row { margin-top: 10px; }
+
+  .booking-note { font-size: 12px; color: var(--slate); text-align: center; margin-top: 14px; line-height: 1.5; }
+
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    z-index: 300;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .bn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--slate);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    padding: 4px 22px;
+    border-radius: 12px;
+    transition: color .15s;
+  }
+  .bn-item .bn-icon { font-size: 21px; line-height: 1; }
+  .bn-item.active { color: var(--teal-dark); }
+  .bn-item.active .bn-icon { transform: translateY(-1px); }
+
+  /* ── DESKTOP ── */
+  @media (min-width: 769px) {
+    body { padding-bottom: 0; }
+    .bottom-nav { display: none; }
+    .top-links { display: flex; }
+    .hero { padding: 56px 24px 48px; }
+    .main { padding: 32px 24px; }
+    .layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+
+    .filters-overlay { display: none; }
+    .filters-panel {
+      position: sticky;
+      top: 76px;
+      left: auto; right: auto; bottom: auto;
+      transform: none;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: none;
+      max-height: none;
+      padding: 22px;
+    }
+    .filters-handle, .filters-close { display: none; }
+    .filters-top { margin-bottom: 16px; }
+
+    .icon-btn.filter-toggle { display: none; }
+
+    .compare-bar { bottom: 0; border-radius: 0; margin: 0; }
+    .stats-bar { justify-content: center; }
+  }
+
+  @media (max-width: 768px) {
+    .clinic-name { font-size: 15px; }
+  }
+
+  .verified-badge { font-size: 11px; color: var(--teal-dark); font-weight: 700; background: var(--teal-soft); padding: 3px 9px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; }
+  .badge-247 { font-size: 11px; color: #fff; font-weight: 700; background: var(--green); padding: 3px 9px; border-radius: 8px; }
+  .price-note { font-size: 11px; color: var(--slate); font-style: italic; margin-top: 2px; }
+  .source-banner {
+    background: var(--teal-soft); border: 1px solid #BFEFE9; border-radius: 12px;
+    padding: 12px 16px; font-size: 12.5px; color: var(--teal-dark); margin-bottom: 16px;
+    display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+  }
+
+  /* ── DARK MODE ── */
+  body.dark { --teal-soft:#0D2E2B; --ink:#F0F4F8; --slate:#94A3B8; --bg:#0F1923; --sur:#1A2535; --brd:#263548; }
+  body.dark .topbar, body.dark .bottom-nav, body.dark .ai-panel, body.dark .booking-modal, body.dark .filters-panel { background:var(--bg) !important; }
+  body.dark .clinic-card, body.dark .skel-card, body.dark .ai-panel { background:var(--sur) !important; }
+  body.dark .search-row, body.dark .search-input { background:var(--sur) !important; color:var(--ink) !important; }
+  body.dark .ai-msg.bot .msg-bubble { background:#1E3040 !important; }
+  body.dark .ai-input { background:#1E3040 !important; color:var(--ink) !important; }
+  body.dark select { background:var(--sur) !important; color:var(--ink) !important; }
+  .dark-btn { background:none; border:none; cursor:pointer; font-size:20px; padding:4px 8px; color:var(--slate); border-radius:8px; }
+
+  /* ── SAVINGS BADGE ── */
+  .savings-badge { display:inline-flex; align-items:center; gap:5px; background:#ECFDF5; color:#065F46; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:8px; margin-top:6px; }
+  body.dark .savings-badge { background:#064E3B; color:#6EE7B7; }
+
+  /* ── PRICE BAR ── */
+  .price-bar-wrap { margin-top:10px; }
+  .price-bar-label { font-size:11px; color:var(--slate); margin-bottom:4px; display:flex; justify-content:space-between; }
+  .price-bar-track { height:6px; background:var(--brd); border-radius:4px; overflow:hidden; }
+  .price-bar-fill { height:100%; border-radius:4px; transition:width .6s cubic-bezier(.2,.8,.2,1); }
+  .price-bar-fill.cheap { background:var(--green); }
+  .price-bar-fill.mid { background:var(--gold); }
+  .price-bar-fill.exp { background:var(--red); }
+
+  /* ── VOICE BTN ── */
+  .voice-btn { background:none; border:1px solid var(--border); border-radius:10px; padding:12px 13px; font-size:16px; cursor:pointer; color:var(--slate); line-height:1; transition:all .15s; }
+  .voice-btn.listening { background:var(--red); border-color:var(--red); color:#fff; animation:pBg 1s infinite; }
+  @keyframes pBg { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+  /* ── CART ── */
+  .cart-panel { position:fixed; right:0; top:60px; bottom:76px; width:290px; background:var(--bg); border-left:1px solid var(--border); z-index:150; transform:translateX(100%); transition:transform .3s cubic-bezier(.2,.8,.2,1); display:flex; flex-direction:column; padding:16px; box-shadow:-6px 0 20px rgba(0,0,0,.1); }
+  .cart-panel.open { transform:translateX(0); }
+  .cart-title { font-family:'Manrope',sans-serif; font-size:16px; font-weight:800; color:var(--ink); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .cart-close { background:var(--sur); border:none; border-radius:8px; width:28px; height:28px; cursor:pointer; font-size:14px; color:var(--slate); }
+  .cart-items { flex:1; overflow-y:auto; }
+  .cart-item { background:var(--sur); border-radius:10px; padding:10px 12px; margin-bottom:8px; position:relative; }
+  .cart-item-name { font-size:12.5px; font-weight:600; color:var(--ink); padding-right:24px; }
+  .cart-item-clinic { font-size:11px; color:var(--slate); margin-top:2px; }
+  .cart-item-price { font-size:14px; font-weight:800; color:var(--teal-dark); margin-top:3px; }
+  .cart-item-del { position:absolute; top:8px; right:8px; background:none; border:none; color:var(--red); cursor:pointer; font-size:15px; padding:2px; }
+  .cart-total { border-top:1px solid var(--border); padding-top:12px; margin-top:4px; }
+  .cart-total-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+  .cart-total-label { font-size:12px; color:var(--slate); }
+  .cart-total-price { font-family:'Manrope',sans-serif; font-size:20px; font-weight:800; color:var(--ink); }
+  .cart-empty { text-align:center; padding:28px 12px; color:var(--slate); font-size:13px; }
+  .cart-float { position:fixed; right:16px; bottom:90px; background:var(--teal); color:#fff; border:none; border-radius:50px; padding:11px 16px; font-size:14px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif; box-shadow:0 4px 16px rgba(13,148,136,.35); display:flex; align-items:center; gap:7px; z-index:140; transition:transform .2s; }
+  .cart-float:hover { transform:scale(1.05); }
+  .cart-badge { background:#fff; color:var(--teal-dark); border-radius:50%; width:19px; height:19px; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  @media(min-width:769px){ .cart-panel{bottom:0} .cart-float{bottom:16px} }
+
+  /* ── NEARBY ── */
+  .nearby-chip { font-size:11px; color:#1D4ED8; font-weight:700; background:#EFF6FF; padding:3px 8px; border-radius:7px; }
+  body.dark .nearby-chip { background:#1E3A5F; color:#93C5FD; }
+
+  /* ── API KEY MODAL ── */
+  .apikey-overlay {
+    position: fixed; inset: 0; background: rgba(22,34,46,.55);
+    backdrop-filter: blur(4px); z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .apikey-overlay.hidden { display: none; }
+  .apikey-box {
+    background: #fff; border-radius: 20px;
+    padding: 28px 24px; max-width: 440px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  }
+  .apikey-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .apikey-logo-mark {
+    width: 40px; height: 40px; background: var(--teal);
+    border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; font-size: 20px;
+  }
+  .apikey-logo-name { font-family: 'Manrope',sans-serif; font-weight: 800; font-size: 20px; }
+  .apikey-logo-name span { color: var(--teal); }
+  .apikey-title { font-weight: 700; font-size: 17px; color: var(--ink); margin-bottom: 6px; }
+  .apikey-desc { font-size: 13px; color: var(--slate); line-height: 1.6; margin-bottom: 18px; }
+  .apikey-desc a { color: var(--teal); text-decoration: none; font-weight: 600; }
+  .apikey-input {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 13px 14px; font-size: 14px; font-family: 'Inter',sans-serif;
+    color: var(--ink); outline: none; margin-bottom: 10px;
+    transition: border-color .15s;
+  }
+  .apikey-input:focus { border-color: var(--teal); }
+  .apikey-note {
+    font-size: 12px; color: var(--slate); margin-bottom: 16px;
+    background: var(--surface); border-radius: 10px; padding: 10px 12px;
+    line-height: 1.5;
+  }
+  .apikey-note b { color: var(--ink); }
+  .apikey-btn {
+    width: 100%; background: var(--teal); color: #fff; border: none;
+    border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter',sans-serif; transition: background .15s;
+  }
+  .apikey-btn:hover { background: var(--teal-dark); }
+  .apikey-err { color: var(--red); font-size: 12px; margin-bottom: 10px; display: none; }
+</style>
+<body>
+
+<!-- ── API KEY MODAL ── -->
+<div class="apikey-overlay" id="apikeyOverlay">
+  <div class="apikey-box">
+    <div class="apikey-logo">
+      <div class="apikey-logo-mark">🏥</div>
+      <div class="apikey-logo-name">Med<span>Price</span>.kz</div>
+    </div>
+    <div class="apikey-title">AI мүмкіндігін қосу</div>
+    <div class="apikey-desc">
+      Сайттың AI-кеңесшісі жұмыс жасауы үшін <b>Anthropic API кілтін</b> енгізіңіз.<br><br>
+      Кілтті мына сайттан алуға болады: <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a>
+    </div>
+    <input class="apikey-input" id="apikeyInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" onkeydown="if(event.key==='Enter') saveApiKey()">
+    <div class="apikey-err" id="apikeyErr">❌ API кілті жарамсыз. sk-ant- деп басталуы керек.</div>
+    <div class="apikey-note">
+      <b>🔒 Қауіпсіздік:</b> Кілт тек сіздің браузеріңізде сақталады (localStorage). Ешқайда жіберілмейді. Бет жабылған соң жоғалмайды.
+    </div>
+    <button class="apikey-btn" onclick="saveApiKey()">✓ Кілтті сақтап, жалғастыру</button>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">🏥</div>
+    <div class="logo-text">MedPrice<span>KZ</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px">
+    <button class="dark-btn" id="darkBtn" onclick="toggleDark()" title="Dark mode">🌙</button>
+    <button class="dark-btn" id="voiceBtn" onclick="toggleVoice()" title="Дауыстық іздеу">🎤</button>
+  </div>
+  <div class="top-links">
+    <button class="top-link active" data-view="search" onclick="switchView('search')">Поиск</button>
+    <button class="top-link" data-view="compare" onclick="switchView('compare')">Сравнение</button>
+    <button class="top-link" data-view="ai" onclick="switchView('ai')">AI-советник</button>
+  </div>
+  <div class="city-pill">
+    📍 <select id="citySelect" onchange="onCityChange()">
+      <option value="almaty">Алматы</option>
+      <option value="astana">Астана</option>
+      <option value="shymkent">Шымкент</option>
+      <option value="karaganda">Қарағанды</option>
+      <option value="aktobe">Ақтөбе</option>
+      <option value="uralsk">Орал</option>
+      <option value="atyrau">Атырау</option>
+      <option value="ust-kamenogorsk">Өскемен</option>
+      <option value="aktau">Ақтау</option>
+      <option value="kostanay">Қостанай</option>
+      <option value="pavlodar">Павлодар</option>
+      <option value="semey">Семей</option>
+      <option value="petropavlovsk">Петропавл</option>
+      <option value="taraz">Тараз</option>
+      <option value="taldykorgan">Талдықорған</option>
+      <option value="kyzylorda">Қызылорда</option>
+      <option value="turkistan">Түркістан</option>
+      <option value="kokshetau">Көкшетау</option>
+    </select>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="hero-section">
+  <div class="hero-eyebrow"><span class="dot"></span> 18 қала · 103 клиника · Расталған деректер</div>
+  <h1>Ең қолайлы бағаны<br>табыңыз — <em>медициналық қызметтер</em></h1>
+  <p class="hero-sub">Алматы, Астана, Шымкент және тағы 15 қалада — КДЛ Олимп, HELIX, INVITRO және 100+ клиника</p>
+
+  <div class="search-wrap">
+    <div class="search-row">
+      <input class="search-input" id="mainSearch" type="text" placeholder="Терапевт, МРТ, УЗИ, гинеколог..." autocomplete="off">
+      <button class="search-btn" onclick="doSearch()">Іздеу 🔍</button>
+    </div>
+  </div>
+
+  <div class="hero-tags" id="heroTags"></div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">103</div><div class="stat-label">Клиника</div></div>
+  <div class="stat"><div class="stat-num">18</div><div class="stat-label">Қала</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Проверенные данные</div></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SEARCH VIEW -->
+  <div id="view-search">
+    <!-- AI PANEL -->
+    <div class="ai-panel">
+      <div class="ai-header">
+        <div class="ai-icon">🩺</div>
+        <div>
+          <div class="ai-title">AI-советник MedPrice</div>
+          <div class="ai-subtitle">Сұрағыңызды қазақша немесе орысша жазыңыз</div>
+        </div>
+      </div>
+      <div class="ai-body">
+        <div class="ai-messages" id="aiMessages">
+          <div class="ai-msg bot">
+            <div class="msg-avatar bot">AI</div>
+            <div class="msg-bubble">Сәлем! Мен сізге 18 қаладағы — Алматы, Астана, Шымкент, Қарағанды, Орал, Атырау, Ақтау, Өскемен, Қостанай, Павлодар, Семей, Петропавл, Тараз, Талдықорған, Қызылорда, Түркістан, Көкшетау және Ақтөбедегі — расталған клиникалардың бағасын табуға көмектесемін. Қандай қызмет керек? 🏥</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="aiInput" placeholder="Маған терапевт қабылдауы керек..." onkeydown="if(event.key==='Enter') sendAI()">
+          <button class="ai-send" id="aiSendBtn" onclick="sendAI()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="layout">
+
+      <!-- FILTERS DRAWER -->
+      <div class="filters-overlay" id="filtersOverlay" onclick="closeFilters()"></div>
+      <div class="filters-panel" id="filtersPanel">
+        <div class="filters-handle"></div>
+        <div class="filters-top">
+          <div class="filters-title">Фильтрлер</div>
+          <button class="filters-close" onclick="closeFilters()">✕</button>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Цена (₸)</div>
+          <div class="price-range">
+            <input class="price-input" id="priceMin" type="number" placeholder="от" min="0" inputmode="numeric">
+            <span class="price-sep">—</span>
+            <input class="price-input" id="priceMax" type="number" placeholder="до" min="0" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-label">Дополнительно</div>
+          <label class="checkbox-label"><input type="checkbox" id="filter247"> Только 24/7</label>
+        </div>
+
+        <button class="apply-btn" onclick="applyFiltersAndClose()">Показать результаты</button>
+      </div>
+
+      <!-- RESULTS -->
+      <div>
+        <div class="source-banner">
+          ✅&nbsp;<span>Барлық деректер расталған дереккөздерден алынды: <b>КДЛ Олимп</b> (kdlolymp.kz), <b>HELIX</b> (helix-lab.kz), <b>INVITRO</b> (invitro.kz) + 100+ жергілікті клиника. 103 клиника · 18 қала · Маусым 2026.</span>
+        </div>
+
+        <div class="results-header">
+          <div class="results-count" id="resultsCount">Введите запрос для поиска</div>
+          <div class="header-actions">
+            <button class="icon-btn filter-toggle" id="filterToggleBtn" onclick="openFilters()">🎛 Фильтры</button>
+            <select class="sort-select" id="sortSelect" onchange="sortResults()">
+              <option value="price">Дешевле</option>
+              <option value="price-desc">Дороже</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SKELETON -->
+        <div id="loadingSkeleton" style="display:none">
+          <div class="skel-card"><div class="loading-skeleton skel-line" style="width:40%;height:18px"></div><div class="loading-skeleton skel-line" style="width:60%"></div><div class="loading-skeleton skel-line" style="width:80%"></div></div>
+          <div class="skel-card"><div class="loading-skeleton skel-line" style="width:50%;height:18px"></div><div class="loading-skeleton skel-line" style="width:40%"></div><div class="loading-skeleton skel-line" style="width:70%"></div></div>
+        </div>
+
+        <!-- RESULTS LIST -->
+        <div id="resultsList"></div>
+
+        <!-- EMPTY -->
+        <div class="no-results" id="noResults">
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">Ничего не найдено</div>
+            <div class="empty-sub">Попробуйте другой запрос — например, «терапевт», «УЗИ» или «МРТ»</div>
+          </div>
+        </div>
+
+        <!-- INITIAL STATE -->
+        <div id="initialState">
+          <div class="empty-state">
+            <div class="empty-icon">🏥</div>
+            <div class="empty-title">Начните поиск</div>
+            <div class="empty-sub">Введите название услуги или выберите из быстрых тегов выше</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE VIEW -->
+  <div id="view-compare" class="compare-view">
+    <div id="compareContent">
+      <div class="empty-state">
+        <div class="empty-icon">⚖️</div>
+        <div class="empty-title">Добавьте клиники для сравнения</div>
+        <div class="empty-sub">Найдите услугу и нажмите «Сравнить» на карточке клиники</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI FULL VIEW -->
+  <div id="view-ai" style="display:none">
+    <div class="ai-panel" style="max-width:700px;margin:0 auto">
+      <div class="ai-header">
+        <div class="ai-icon">🩺</div>
+        <div>
+          <div class="ai-title">AI-советник MedPrice</div>
+          <div class="ai-subtitle">Персональный помощник по проверенным клиникам</div>
+        </div>
+      </div>
+      <div class="ai-body">
+        <div class="ai-messages" id="aiMessages2" style="max-height:400px">
+          <div class="ai-msg bot">
+            <div class="msg-avatar bot">AI</div>
+            <div class="msg-bubble">Сәлем! Мен MedPrice KZ AI-советнигімін. Алматы, Астана, Шымкент, Қарағанды, Ақтөбе, Орал, Атырау, Өскемендегі расталған клиникалар бойынша көмектесемін.<br><br>Мысалы сұрай аласыз:<br>• «Алматыда терапевт қанша тұрады?»<br>• «Шымкентте МРТ қайда жасатуға болады?»<br>• «Астанада гинеколог қабылдауы»</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <input class="ai-input" id="aiInput2" placeholder="Сұрағыңызды жазыңыз..." onkeydown="if(event.key==='Enter') sendAI2()">
+          <button class="ai-send" id="aiSendBtn2" onclick="sendAI2()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMPARE BAR -->
+<div class="compare-bar" id="compareBar">
+  <div class="compare-info">Выбрано: <strong id="compareCount">0</strong> клиники</div>
+  <div class="compare-actions">
+    <button class="compare-clear" onclick="clearCompare()">Очистить</button>
+    <button class="compare-go" onclick="goCompare()">Сравнить →</button>
+  </div>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingOverlay" onclick="closeBooking()"></div>
+<div class="booking-modal" id="bookingModal">
+  <div class="booking-handle"></div>
+  <div id="bookingContent"></div>
+</div>
+
+<!-- CART PANEL -->
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-title">🛒 Қызметтер себеті <button class="cart-close" onclick="closeCart()">✕</button></div>
+  <div class="cart-items" id="cartItems"><div class="cart-empty">Себет бос.<br>Карточкадағы «+ Себет» батырмасын басыңыз</div></div>
+  <div class="cart-total" id="cartTotal" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Жалпы сома:</span>
+      <span class="cart-total-price" id="cartTotalPrice">0 ₸</span>
+    </div>
+    <div style="font-size:11px;color:var(--slate);margin-top:4px">* Нақты баға клиникада нақтыланады</div>
+  </div>
+</div>
+<button class="cart-float" id="cartFloat" onclick="toggleCart()" style="display:none">
+  🛒 Себет <span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<!-- BOTTOM NAV (mobile) -->
+<div class="bottom-nav">
+  <button class="bn-item active" data-view="search" onclick="switchView('search')">
+    <span class="bn-icon">🔍</span><span>Іздеу</span>
+  </button>
+  <button class="bn-item" data-view="compare" onclick="switchView('compare')">
+    <span class="bn-icon">⚖️</span><span>Салыстыру</span>
+  </button>
+  <button class="bn-item" data-view="ai" onclick="switchView('ai')">
+    <span class="bn-icon">🩺</span><span>AI</span>
+  </button>
+</div>
+
+<script>
+// ── DATA (только проверенные, реальные данные, без вымысла) ────────────
+// Поля rating / hours(кроме явного "24/7") / язык приёма НЕ указаны —
+// так как этой информации не было предоставлено, мы её не выдумываем.
+
+const CITY_NAMES = { almaty:"Алматы", astana:"Астана", shymkent:"Шымкент", karaganda:"Қарағанды", aktobe:"Ақтөбе", uralsk:"Орал", atyrau:"Атырау", "ust-kamenogorsk":"Өскемен", aktau:"Ақтау", kostanay:"Қостанай", pavlodar:"Павлодар", semey:"Семей", petropavlovsk:"Петропавл", taraz:"Тараз", taldykorgan:"Талдықорған", kyzylorda:"Қызылорда", turkistan:"Түркістан", kokshetau:"Көкшетау" };
+
+const CLINICS = [
+  {
+    id: 1,
+    name: "Эмирмед",
+    subtitle: "Көпсалалы емхана",
+    city: "almaty",
+    address: "Розыбакиев көшесі, 37В, Алматы (басқа да филиалдары бар)",
+    phone: "+7 727 356-03-03",
+    phoneNote: "немесе 103 қызметі арқылы жазылу",
+    instagram: "emirmed_official",
+    is247: true,
+    services: {
+      "Терапевт қабылдауы": { price: 7000, priceTo: 14000 },
+      "Кардиолог қабылдауы": { price: 7000, priceTo: 14000 },
+      "Уролог қабылдауы": { price: 7000, priceTo: 14000 },
+      "Гинеколог қабылдауы": { price: 7000, priceTo: 14000 },
+      "Онколог қабылдауы": { price: 7000, priceTo: 14000 },
+      "УЗИ зерттеуі": { price: 5000, priceTo: 10000 },
+    },
+    otherServices: ["ЭКГ", "Зертханалық талдаулар"]
+  },
+  {
+    id: 2,
+    name: "HealthCity",
+    subtitle: "Диагностикалық орталық",
+    city: "almaty",
+    address: "Мұсабаев көшесі, 8, Алматы",
+    phone: "+7 727 331-33-31",
+    phoneNote: "",
+    instagram: "healthcity.kz",
+    is247: false,
+    services: {
+      "МРТ (бір бөлім — бас миы немесе омыртқа)": { price: 25900, from: true },
+      "Дәрігерлер кеңесі": { price: 10000, from: true },
+    },
+    otherServices: ["КТ", "Чек-ап (толық ағзаны тексеру) бағдарламалары", "Тар бейінді мамандар кеңесі"]
+  },
+  {
+    id: 3,
+    name: "Altai Clinic",
+    subtitle: "Медициналық орталық",
+    city: "astana",
+    address: "Сарайшық көшесі, 7 / Петров көшесі, 18, Астана",
+    phone: "+7 7172 72-88-88",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Гинекологтың алғашқы қабылдауы": { price: 15000 },
+      "Гинекологтың қайталау қабылдауы": { price: 12000 },
+      "Бейнекольпоскопия": { price: 15000 },
+      "УЗИ зерттеуі": { price: 6000, priceTo: 10000 },
+    },
+    otherServices: ["Педиатрия", "Гастроэнтерология", "Офтальмология", "Жүктілікті жүргізу"]
+  },
+  {
+    id: 4,
+    name: "Ultraline",
+    subtitle: "Диагностика және гинекология орталығы",
+    city: "astana",
+    address: "Әнет баба көшесі, 13 (ЖК Манхэттен), Астана",
+    phone: "+7 707 344-03-03",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Кешенді пакет (УЗИ + гинеколог қабылдауы + мазок)": { price: 18000 },
+      "Жалпы дәрігерлер қабылдауы": { price: 8000, priceTo: 12000 },
+    },
+    otherServices: ["УЗИ диагностикасы", "Терапия", "Әйелдер денсаулығын тексеру (Чек-ап)"]
+  },
+  {
+    id: 5,
+    name: "Мұрат Медициналық Орталығы",
+    subtitle: "Murat Medical Center",
+    city: "shymkent",
+    address: "Елшібек Батыр көшесі, 55, Шымкент",
+    phone: "+7 7252 57-14-86",
+    phoneNote: "қосымша: +7 701 755-54-44",
+    is247: false,
+    services: {
+      "Мамандардың қабылдауы": { price: 6000, priceTo: 10000 },
+      "Венаға укол салу": { price: 2500, from: true },
+      "Бұлшықетке укол салу": { price: 2200, from: true },
+    },
+    otherServices: ["Неврология", "Кардиология", "Терапия", "Хирургия", "УЗИ", "Күндізгі стационар"]
+  },
+  {
+    id: 6,
+    name: "MGM-STAN",
+    subtitle: "Диагностикалық орталық",
+    city: "shymkent",
+    address: "Тәуке хан даңғылы, 127, Шымкент",
+    phone: "+7 7252 39-44-44",
+    phoneNote: "",
+    is247: true,
+    services: {
+      "МРТ/КТ зерттеуі (бір аймақ)": { price: 16000, priceTo: 22000 },
+      "Рентген": { price: 2500, priceTo: 5000 },
+    },
+    otherServices: ["КТ (компьютерлік томография)", "МРТ (іш құрылысы, кіші жамбас, кеуде клеткасы)", "УЗИ"]
+  },
+  {
+    id: 7,
+    name: "DiVera",
+    subtitle: "Көпсалалы медициналық орталық және зертхана",
+    city: "karaganda",
+    address: "Әлиханов көшесі, 34/2, Қарағанды",
+    phone: "+7 7212 90-33-03",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлердің алғашқы қабылдауы": { price: 7000, priceTo: 12000 },
+      "УЗИ зерттеуі": { price: 5000, priceTo: 9000 },
+    },
+    otherServices: ["Эндокринология", "Гинекология", "Урология", "Терапия", "Кардиология", "Зертханалық талдаулар"]
+  },
+  {
+    id: 8,
+    name: "Аланда клиникасы",
+    subtitle: "Alanda Clinic",
+    city: "karaganda",
+    address: "Тәттімбет көшесі, 10, Қарағанды",
+    phone: "+7 7212 47-90-90",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар кеңесі": { price: 9000, priceTo: 15000 },
+      "МРТ (бір аймақ)": { price: 22000, from: true },
+    },
+    otherServices: ["КТ", "Стационарлық емдеу", "Хирургия", "Пластикалық хирургия", "Педиатрия", "Стоматология"]
+  },
+  {
+    id: 9,
+    name: "Дару",
+    subtitle: "Клиникалық-оңалту орталығы",
+    city: "aktobe",
+    address: "Тәуелсіздік даңғылы, 13Б, Ақтөбе",
+    phone: "+7 7132 70-40-00",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлер қабылдауы": { price: 8000, priceTo: 13000 },
+      "Оңалту/физиотерапия процедурасы (1 сеанс)": { price: 3000, from: true },
+    },
+    otherServices: ["Неврология", "Кардиореабилитация", "Ортопедия", "Сумен емдеу (водолечебница)", "КТ", "МРТ"]
+  },
+  {
+    id: 10,
+    name: "Куаныш",
+    subtitle: "Медициналық орталық",
+    city: "aktobe",
+    address: "Шәмші Қалдаяқов көшесі, 11, Ақтөбе",
+    phone: "+7 7132 56-34-40",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлердің қабылдауы": { price: 6500, priceTo: 10000 },
+      "Жалпы талдаулар мен УЗИ": { price: 4500, priceTo: 8000 },
+    },
+    otherServices: ["Хирургия", "Гинекология", "Лор", "Окулист", "УЗИ", "ЭКГ", "Күндізгі стационар"]
+  },
+  {
+    id: 11,
+    name: "Interteach",
+    subtitle: "Интертич медикалық орталығы",
+    city: "uralsk",
+    address: "Мұхит көшесі, 78, Орал",
+    phone: "+7 7112 24-11-24",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандардың қабылдауы": { price: 8000, priceTo: 12000 },
+      "Күндізгі стационар (1 күн)": { price: 5000, from: true },
+    },
+    otherServices: ["Терапевт", "Педиатр", "Невропатолог", "Кардиолог қабылдауы", "Массаж", "Физиотерапия", "Сақтандыру полистерімен жұмыс"]
+  },
+  {
+    id: 12,
+    name: "Талап",
+    subtitle: "Медициналық емханалар желісі",
+    city: "uralsk",
+    address: "Нұрсұлтан Назарбаев даңғылы, 206, Орал (басқа да филиалдары бар)",
+    phone: "+7 7112 24-24-24",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Алғашқы қабылдау": { price: 7000, priceTo: 11000 },
+      "УЗИ және диагностика": { price: 4000, priceTo: 7500 },
+    },
+    otherServices: ["Меншікті зертхана", "Рентген", "Маман дәрігерлердің толық спектрі", "Балалар бөлімі"]
+  },
+  {
+    id: 13,
+    name: "Олимп Клиника",
+    subtitle: "Олимп клиникасы",
+    city: "atyrau",
+    address: "Сәтпаев көшесі, 2В, Атырау",
+    phone: "+7 7122 27-66-00",
+    phoneNote: "Олимп бірыңғай нөмірі: 59-79-69",
+    is247: false,
+    services: {
+      "Дәрігерлер кеңесі": { price: 9000, priceTo: 14000 },
+      "Комплексті қан талдаулары (чек-ап)": { price: 15000, from: true },
+    },
+    otherServices: ["Зертханалық талдаулардың барлық түрі", "Терапия", "Гинекология", "Урология", "Гастроэнтерология", "Функционалды диагностика"]
+  },
+  {
+    id: 14,
+    name: "Медикер Жайық",
+    subtitle: "Медициналық орталық",
+    city: "atyrau",
+    address: "Әбілқайыр хан даңғылы, 65, Атырау",
+    phone: "+7 7122 55-80-08",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Профильді дәрігерлердің қабылдауы": { price: 8500, priceTo: 13000 },
+    },
+    otherServices: ["Өндірістік медицина", "Кәсіби тексеріс (медосмотр)", "Травматология", "Хирургия", "Лор", "Стационарлық көмек"]
+  },
+  {
+    id: 15,
+    name: "Евромед",
+    subtitle: "Медициналық орталық",
+    city: "ust-kamenogorsk",
+    address: "Қазақстан көшесі, 102, Өскемен",
+    phone: "+7 7232 25-44-22",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлер қабылдауы": { price: 7000, priceTo: 11000 },
+      "ЭКГ және Холтер мониторингі": { price: 4500, priceTo: 12000 },
+    },
+    otherServices: ["Кардиология", "Неврология", "Аллергология", "УЗИ", "Функционалдық диагностика (Холтер, СМАД)"]
+  },
+  {
+    id: 16,
+    name: "Ұлттық ғылыми кардиохирургия орталығы",
+    subtitle: "Үлкен мемлекеттік кешен",
+    city: "astana",
+    address: "Тұран даңғылы, 38, Астана",
+    phone: "+7 7172 70-30-70",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Профессор/доктор қабылдауы": { price: 12000, priceTo: 18000 },
+      "ЭКГ/УЗИ": { price: 6000, from: true },
+    },
+    otherServices: ["Жүрек-қан тамырлары ауруларын емдеу", "Кардиолог/аритмолог кеңесі", "ЭхоКГ", "Коронарография"]
+  },
+  {
+    id: 17,
+    name: "Ана мен бала ұлттық ғылыми орталығы",
+    subtitle: "UMC",
+    city: "astana",
+    address: "Тұран даңғылы, 32, Астана",
+    phone: "+7 7172 70-15-50",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Алғашқы консультация": { price: 10000, priceTo: 15000 },
+    },
+    otherServices: ["Педиатрияның барлық түрлері", "Балалар хирургиясы", "Акушерлік және гинекология", "Репродуктология (ЭКО)"]
+  },
+  {
+    id: 18,
+    name: "Президенттік клиника",
+    subtitle: "ҚР ПІБ Медициналық орталығының ауруханасы",
+    city: "astana",
+    address: "Есіл ауданы, Е-495 көшесі, 2 (Орынбор тас жолына жақын), Астана",
+    phone: "+7 7172 70-80-90",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігер қабылдауы": { price: 12000, priceTo: 20000 },
+      "МРТ": { price: 28000, from: true },
+    },
+    otherServices: ["Жоғары деңгейдегі диагностика (Check-up)", "КТ", "ПЭТ/КТ", "Роботтандырылған хирургия", "Тар бейінді мамандар"]
+  },
+  {
+    id: 19,
+    name: "Мейірім",
+    subtitle: "Көпсалалы медициналық орталық",
+    city: "astana",
+    address: "Отырар көшесі, 4/2, Астана",
+    phone: "+7 7172 79-00-33",
+    phoneNote: "қосымша: +7 707 779-00-33",
+    is247: false,
+    services: {
+      "Дәрігерлер қабылдауы": { price: 8000, priceTo: 12000 },
+      "Жалпы талдаулар": { price: 2500, from: true },
+    },
+    otherServices: ["Терапия", "ЛОР", "Офтальмология", "Урология", "Өз зертханасы", "Күндізгі стационар"]
+  },
+  {
+    id: 20,
+    name: "Open Clinic",
+    subtitle: "Көпсалалы емхана",
+    city: "astana",
+    address: "Отырар көшесі, 8/1, Астана",
+    phone: "+7 7172 21-95-95",
+    phoneNote: "қосымша: +7 701 532-95-95",
+    is247: false,
+    services: {
+      "Мамандар кеңесі": { price: 7500, priceTo: 11000 },
+    },
+    otherServices: ["Неврология", "Мануалды терапия", "Гинекология", "УЗИ", "Педиатрия (барлық жас)"]
+  },
+  {
+    id: 21,
+    name: "Достар Мед Престиж",
+    subtitle: "Dostar Med",
+    city: "astana",
+    address: "Ауылы даңғылы, 20 (немесе Бұқар Жырау, 35), Астана",
+    phone: "+7 7172 27-24-40",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлердің алғашқы қабылдауы": { price: 8500, priceTo: 13000 },
+    },
+    otherServices: ["Аллергология", "Эндокринология", "Гастроэнтерология", "Кішігірім хирургиялық оталар"]
+  },
+  {
+    id: 22,
+    name: "Green Clinic",
+    subtitle: "Заманауи емхана",
+    city: "astana",
+    address: "Мәңгілік Ел даңғылы, 40, Астана",
+    phone: "+7 7172 64-33-33",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Жалпы дәрігерлер қабылдауы": { price: 9000, priceTo: 14000 },
+    },
+    otherServices: ["Терапевт", "Кардиолог", "Дерматолог қабылдауы", "Физиотерапия", "Чек-ап бағдарламалары"]
+  },
+  {
+    id: 23,
+    name: "Керуен-Medicus",
+    subtitle: "Перзентхана және клиника",
+    city: "astana",
+    address: "Мәңгілік Ел даңғылы, 53, Астана",
+    phone: "+7 7172 55-44-33",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Консультация": { price: 10000, from: true },
+    },
+    otherServices: ["Тәулік бойы гинекология", "Босандыру", "Педиатрия", "3D/4D УЗИ", "Жүктілікті есепке алу пакеттері (қымбаттау)"]
+  },
+  {
+    id: 24,
+    name: "Медикер табиғат",
+    subtitle: "Mediker",
+    city: "astana",
+    address: "Қабанбай батыр даңғылы, 17, Астана",
+    phone: "+7 7172 55-81-21",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігер қабылдауы": { price: 8000, from: true },
+    },
+    otherServices: ["Еңбек мигранттары мен жұмысшыларға медосмотр", "Терапия", "ЛОР", "Стоматология"]
+  },
+  {
+    id: 25,
+    name: "Интертич Астана",
+    subtitle: "Interteach",
+    city: "astana",
+    address: "Кенесары көшесі, 44, Астана",
+    phone: "+7 7172 59-22-00",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Алғашқы тексеру": { price: 9000, priceTo: 13000 },
+    },
+    otherServices: ["Отбасылық дәрігерлер", "Жедел жәрдем шақыру", "Невропатолог", "Капельницалар"]
+  },
+  {
+    id: 26,
+    name: "Orhun Medical",
+    subtitle: "Орхун Медикал — Халықаралық диагностика орталығы",
+    city: "astana",
+    address: "Тұран даңғылы, 50/1, Астана",
+    phone: "+7 7172 57-37-37",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "МРТ (бір аймақ)": { price: 26000, priceTo: 35000 },
+    },
+    otherServices: ["Жоғары сапалы КТ", "Цифрлық маммография", "Онкологиялық диагностика"]
+  },
+  {
+    id: 27,
+    name: "Rext Клиникасы",
+    subtitle: "Буын және омыртқа орталығы",
+    city: "astana",
+    address: "Тәуелсіздік даңғылы, 38, Астана",
+    phone: "+7 7172 40-20-40",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Реабилитолог/ортопед кеңесі": { price: 9000, from: true },
+    },
+    otherServices: ["Буын және омыртқа ауруларын емдеу", "Ортопедия", "Неврология", "Кинезиотерапия"]
+  },
+  {
+    id: 28,
+    name: "Сәні",
+    subtitle: "Медициналық орталық",
+    city: "astana",
+    address: "Бөгенбай батыр даңғылы, 54, Астана",
+    phone: "+7 7172 38-34-34",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Қабылдау": { price: 7000, priceTo: 10000 },
+    },
+    otherServices: ["Урология", "Андрология", "Гинекология", "Дерматология (тері ауруларын емдеу)"]
+  },
+  {
+    id: 29,
+    name: "УроФарм",
+    subtitle: "UroPharm",
+    city: "astana",
+    address: "Желтоксан көшесі, 48а, Астана",
+    phone: "+7 7172 31-64-64",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Уролог қабылдауы": { price: 8000, priceTo: 12000 },
+    },
+    otherServices: ["Бүйрек, қуық ауруларын емдеу", "Урологиялық оталар", "Ерлер денсаулығы", "УЗИ"]
+  },
+  {
+    id: 30,
+    name: "Uniserv Medical Center",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Шолохов көшесі, 36, Орал",
+    phone: "+7 771 880-20-20",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "Кардиолог қабылдауы": { price: 7000 },
+      "Іш қуысы УДЗ": { price: 5500 },
+    },
+    otherServices: ["Анализдер", "Чек-ап бағдарламалары"]
+  },
+  {
+    id: 31,
+    name: "УРОМЕД",
+    subtitle: "Урология және гинекология орталығы",
+    city: "uralsk",
+    address: "Ковыльная көшесі, Орал",
+    phone: "+7 7112 22-26-20",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Уролог қабылдауы": { price: 7000 },
+      "Гинеколог қабылдауы": { price: 10000 },
+      "Іш қуысы УДЗ": { price: 5500 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 32,
+    name: "Клиника Interteach",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Сәкен Сейфуллин көшесі, 34, Орал",
+    phone: "+7 7112 50-47-17",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Педиатрия"]
+  },
+  {
+    id: 33,
+    name: "INTERTEACH",
+    subtitle: "Отбасылық медицина орталығы",
+    city: "uralsk",
+    address: "Строитель шағынауданы, 2/6, Орал",
+    phone: "+7 700 836-93-00",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Отбасылық медицина", "Диагностика"]
+  },
+  {
+    id: 34,
+    name: "MEDIKER",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Құрманғазы көшесі, 196, Орал",
+    phone: "+7 7112 93-35-55",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "ЭКГ": { price: 1500 },
+    },
+    otherServices: ["Жалпы медицина", "Профилактикалық тексерулер"]
+  },
+  {
+    id: 35,
+    name: "Consilium International Clinic",
+    subtitle: "Көпсалалы медициналық орталық",
+    city: "uralsk",
+    address: "Астана шағынауданы, 12, Орал",
+    phone: "",
+    phoneNote: "Телефон нақтыланбаған — тікелей клиникаға барып сұраңыз",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Көпсалалы медициналық қызметтер"]
+  },
+  {
+    id: 36,
+    name: "SitiMed",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Әлия Молдағұлова көшесі, 3, Орал",
+    phone: "+7 777 863-55-53",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "Іш қуысы УДЗ": { price: 5500 },
+      "Жалпы қан анализі": { price: 2800 },
+    },
+    otherServices: ["Зертханалық қызметтер"]
+  },
+  {
+    id: 37,
+    name: "ORION MEDICALS",
+    subtitle: "Диагностика орталығы",
+    city: "uralsk",
+    address: "Орал қ., 20 ғимарат",
+    phone: "+7 777 775-45-45",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Дәрігерлер консультациясы": { price: 7000 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 38,
+    name: "Arsam",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Есенжанов көшесі, 1, Орал",
+    phone: "+7 7112 53-72-52",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+      "ЭКГ": { price: 1500 },
+    },
+    otherServices: ["Көпсалалы медициналық қызметтер"]
+  },
+  {
+    id: 39,
+    name: "Medical Diagnostic Center",
+    subtitle: "Диагностика орталығы",
+    city: "uralsk",
+    address: "3-ші Құрылыс тұйығы, 6/1, Орал",
+    phone: "+7 7112 91-80-64",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 2800 },
+      "Іш қуысы УДЗ": { price: 5500 },
+    },
+    otherServices: ["Анализдер", "Зертхана", "Диагностика"]
+  },
+  {
+    id: 40,
+    name: "Mrt Tsentr Magnesiya",
+    subtitle: "МРТ диагностика орталығы",
+    city: "uralsk",
+    address: "Құрманғазы көшесі, Орал",
+    phone: "+7 7112 91-80-69",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "МРТ диагностикасы": { price: 7000, from: true },
+    },
+    otherServices: ["МРТ диагностикасының барлық түрлері"]
+  },
+  {
+    id: 41,
+    name: "Mig Qazaqstan",
+    subtitle: "Ядролық медицина орталығы",
+    city: "uralsk",
+    address: "Алматы көшесі, 58, Орал",
+    phone: "+7 701 712-50-51",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "КТ диагностикасы": { price: 7000, from: true },
+    },
+    otherServices: ["КТ (компьютерлік томография)", "Сәулелік терапия", "Ядролық медицина"]
+  },
+  {
+    id: 42,
+    name: "DiVera Орал",
+    subtitle: "Диагностика орталығы",
+    city: "uralsk",
+    address: "Темір Масин көшесі, 44/1, Орал",
+    phone: "",
+    phoneNote: "Телефон нақтыланбаған — тікелей клиникаға барып сұраңыз",
+    is247: false,
+    services: {
+      "Гинеколог қабылдауы": { price: 10000 },
+      "УДЗ диагностикасы": { price: 5500 },
+    },
+    otherServices: ["Әйелдер денсаулығы", "Диагностика"]
+  },
+  {
+    id: 43,
+    name: "Oral Stom",
+    subtitle: "Медициналық орталық",
+    city: "uralsk",
+    address: "Құрманғазы көшесі, 59, Орал",
+    phone: "+7 7112 51-51-86",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Кардиолог қабылдауы": { price: 7000 },
+      "ЛОР қабылдауы": { price: 7000 },
+      "Іш қуысы УДЗ": { price: 5500 },
+    },
+    otherServices: ["Невропатолог"]
+  },
+  {
+    id: 44,
+    name: "Gerolda Belgera",
+    subtitle: "Медициналық консультация орталығы",
+    city: "uralsk",
+    address: "Победа көшесі, 137, Орал",
+    phone: "+7 707 452-58-70",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар консультациясы": { price: 7000 },
+    },
+    otherServices: ["Медициналық консультациялар мен диагностика"]
+  },
+  {
+    id: 45,
+    name: "Медициналық орталық д-р Пасенова",
+    subtitle: "Meditsinskiy Tsentr Doktora Pasenova",
+    city: "aktau",
+    address: "8-ықшамаудан, 38, Elite Alliance БО, Ақтау",
+    phone: "+7 707 522-36-49",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 7000 },
+      "Кардиолог қабылдауы": { price: 7000 },
+      "Невролог қабылдауы": { price: 7000 },
+    },
+    otherServices: ["УДЗ", "Анализдер"]
+  },
+  {
+    id: 46,
+    name: "Orhun Medical Ақтау",
+    subtitle: "Медицинский центр",
+    city: "aktau",
+    address: "12А ықшамауданы, 9, Ақтау",
+    phone: "+7 776 000-28-14",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Көпсалалы диагностика", "Балалар және ересектер дәрігерлері"]
+  },
+  {
+    id: 47,
+    name: "Денсаулық",
+    subtitle: "Медициналық клиника",
+    city: "aktau",
+    address: "26-ықшамаудан, 71 ғимарат, Ақтау",
+    phone: "+7 702 507-56-01",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "УДЗ бүйрек": { price: 7000 },
+      "УДЗ қуық": { price: 4000 },
+      "УДЗ құрсақ қуысы": { price: 9000 },
+      "УДЗ құрсақ қуысы + бүйрек": { price: 12000 },
+      "Қалқанша без УДЗ": { price: 7000 },
+    },
+    otherServices: ["ЭКГ", "Аллерголог қабылдауы", "Кардиолог қабылдауы"]
+  },
+  {
+    id: 48,
+    name: "Медицинский центр Касиет",
+    subtitle: "Медициналық клиника",
+    city: "aktau",
+    address: "26-ықшамаудан, Ақтау",
+    phone: "+7 7292 42-93-21",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Терапия", "Диагностика"]
+  },
+  {
+    id: 49,
+    name: "Клиника Сенім",
+    subtitle: "Медициналық клиника",
+    city: "aktau",
+    address: "Ақтау (толық мекенжай нақтыланбаған)",
+    phone: "+7 7292 30-25-26",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Жалпы дәрігер қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Жалпы медициналық қызметтер"]
+  },
+  {
+    id: 50,
+    name: "Neyron",
+    subtitle: "Неврология клиникасы",
+    city: "aktau",
+    address: "Ақтау (толық мекенжай нақтыланбаған)",
+    phone: "+7 7292 46-77-11",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Невролог қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Неврология", "Диагностика"]
+  },
+  {
+    id: 51,
+    name: "Mediterra",
+    subtitle: "Көпсалалы клиника",
+    city: "aktau",
+    address: "Ақтау (толық мекенжай нақтыланбаған)",
+    phone: "+7 777 705-63-45",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Көпсалалы медициналық көмек"]
+  },
+  {
+    id: 52,
+    name: "Ekomed",
+    subtitle: "Репродуктология клиникасы",
+    city: "aktau",
+    address: "17-ықшамаудан, 7, Green Park ТК, Ақтау",
+    phone: "+7 775 007-07-00",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Гинеколог қабылдауы": { price: 10000 },
+    },
+    otherServices: ["Репродуктология", "ЭКО", "Гинекология"]
+  },
+  {
+    id: 53,
+    name: "TERRAMED AKTAU",
+    subtitle: "Омыртқа және буын орталығы",
+    city: "aktau",
+    address: "20-ықшамаудан, 12/1, Ақтау",
+    phone: "+7 747 244-04-70",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Омыртқа және буын ауруларын емдеу", "Реабилитация"]
+  },
+  {
+    id: 54,
+    name: "Lor-Medius Klinika",
+    subtitle: "ЛОР клиникасы",
+    city: "aktau",
+    address: "32-ықшамаудан, Ақтау",
+    phone: "+7 776 111-26-32",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "ЛОР қабылдауы": { price: 7000 },
+    },
+    otherServices: ["Балалар және ересектер ЛОР қабылдауы"]
+  },
+  {
+    id: 55,
+    name: "БИОС медициналық орталығы",
+    subtitle: "Урология орталығы",
+    city: "aktau",
+    address: "Ақтау (толық мекенжай нақтыланбаған, bios-aktau.kz)",
+    phone: "",
+    phoneNote: "Сайт арқылы жазылуға болады: bios-aktau.kz",
+    is247: false,
+    services: {
+      "Уролог қабылдауы": { price: 5000, from: true },
+      "Сүндеттеу": { price: 10000, from: true },
+      "Варикоцеле операциясы": { price: 35000, from: true },
+    },
+    otherServices: ["Урология"]
+  },
+  {
+    id: 56,
+    name: "Центр Диагностики Актау",
+    subtitle: "МРТ және КТ диагностика орталығы",
+    city: "aktau",
+    address: "Ақтау (толық мекенжай нақтыланбаған)",
+    phone: "",
+    phoneNote: "Телефон нақтыланбаған — тікелей клиникаға барып сұраңыз",
+    is247: false,
+    services: {
+      "МРТ ми": { price: 16900, from: true },
+      "МРТ мойын омыртқасы": { price: 16900, from: true },
+      "КТ ми": { price: 15000, from: true },
+      "КТ мұрын қуыстары": { price: 16000, from: true },
+    },
+    otherServices: ["МРТ диагностикасының барлық түрлері", "КТ диагностикасы"]
+  },
+  {
+    id: 57,
+    name: "Interteach Medical Center",
+    subtitle: "Клиника Интертич",
+    city: "atyrau",
+    address: "Исатай Тайманов даңғылы, 48, Атырау",
+    phone: "+7 702 223-13-19",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Гинеколог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 18000 },
+    },
+    otherServices: ["Анализдер"]
+  },
+  {
+    id: 58,
+    name: "Doctor-Plus Atyrau",
+    subtitle: "Медициналық клиника",
+    city: "atyrau",
+    address: "М. Темірханов көшесі, 12А, Атырау",
+    phone: "+7 7122 28-03-03",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 18000 },
+    },
+    otherServices: ["Диагностика (УДЗ бағасын телефон арқылы нақтылаңыз)"]
+  },
+  {
+    id: 59,
+    name: "Медицинский центр Western",
+    subtitle: "Медициналық клиника",
+    city: "atyrau",
+    address: "Авангард-4 ықшамауданы, 15Г, Атырау",
+    phone: "+7 7122 20-09-09",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Көпсалалы диагностика"]
+  },
+  {
+    id: 60,
+    name: "DiVera Атырау",
+    subtitle: "Медицинский центр",
+    city: "atyrau",
+    address: "С. Қожықов көшесі, 8, Атырау",
+    phone: "+7 775 007-83-75",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Гинеколог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 18000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Зертханалық тексерулер"]
+  },
+  {
+    id: 61,
+    name: "Caspian Medical",
+    subtitle: "Медициналық клиника",
+    city: "atyrau",
+    address: "Атырау қаласы (толық мекенжай нақтыланбаған)",
+    phone: "+7 7122 50-03-03",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Педиатрия", "Диагностика"]
+  },
+  {
+    id: 62,
+    name: "Open Clinic Атырау",
+    subtitle: "Тәулік бойы медициналық орталық",
+    city: "atyrau",
+    address: "Студенттер даңғылы, 205А, Атырау",
+    phone: "+7 701 961-65-85",
+    phoneNote: "",
+    is247: true,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Тәулік бойы (24/7) жұмыс істейді"]
+  },
+  {
+    id: 63,
+    name: "Клиника доктора Дастана",
+    subtitle: "Klinika Doktora Dastana",
+    city: "atyrau",
+    address: "Әди Шәріпов көшесі, 32Г, Атырау",
+    phone: "+7 778 012-29-78",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Невролог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 64,
+    name: "Prospekt Medical Caspian",
+    subtitle: "Медициналық клиника",
+    city: "atyrau",
+    address: "Әбілқайыр хан даңғылы, 92В, Атырау",
+    phone: "+7 701 266-63-99",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Зертханалық қызметтер"]
+  },
+  {
+    id: 65,
+    name: "AB Medical",
+    subtitle: "Медициналық клиника",
+    city: "atyrau",
+    address: "Бауыржан Момышұлы көшесі, 21А, Атырау",
+    phone: "+7 7122 30-44-14",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 66,
+    name: "Family Health Clinic",
+    subtitle: "Отбасылық медицина орталығы",
+    city: "atyrau",
+    address: "Оңдасынов көшесі, Атырау (толық мекенжай нақтыланбаған)",
+    phone: "",
+    phoneNote: "Телефон нақтыланбаған — тікелей клиникаға барып сұраңыз",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Отбасылық медицина", "Балалар және ересектер қабылдауы"]
+  },
+  {
+    id: 67,
+    name: "Diaverum Атырау",
+    subtitle: "Гемодиализ орталығы",
+    city: "atyrau",
+    address: "Атырау (толық мекенжай нақтыланбаған)",
+    phone: "+7 771 709-03-04",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Гемодиализ қызметі (баға телефон арқылы нақтыланады)": { price: 0, from: true },
+    },
+    otherServices: ["Бүйрек жетіспеушілігін емдеу — баға телефон арқылы нақтыланады"]
+  },
+  {
+    id: 68,
+    name: "ORHUN MEDICAL Қарағанды",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Степной-4 шағынауданы, 2/3, Қарағанды",
+    phone: "+7 776 000-28-14",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "МРТ": { price: 20000, priceTo: 60000 },
+      "КТ": { price: 18000, priceTo: 45000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Гинеколог қабылдауы": { price: 10000, priceTo: 20000 },
+    },
+    otherServices: ["Рентген", "Неврология", "Урология", "Зертхана"]
+  },
+  {
+    id: 69,
+    name: "SAMED Медицинский центр",
+    subtitle: "Медициналық клиника",
+    city: "karaganda",
+    address: "Гоголь көшесі, 128, Қарағанды",
+    phone: "+7 708 822-64-28",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 70,
+    name: "Integra Clinic",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Аманжолов көшесі, 45А, Қарағанды",
+    phone: "",
+    phoneNote: "Телефон нақтыланбаған — тікелей клиникаға барып сұраңыз",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Көпсалалы медициналық қызметтер"]
+  },
+  {
+    id: 71,
+    name: "PROMED",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Байкен Әшімов көшесі, 15, Қарағанды",
+    phone: "+7 705 609-44-64",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Диагностика", "Зертханалық қызметтер"]
+  },
+  {
+    id: 72,
+    name: "Gala Клиника",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Ержанов көшесі, 41/1, Қарағанды",
+    phone: "+7 701 608-11-67",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Видеокольпоскопия": { price: 8000 },
+      "Жалпы массаж": { price: 12000 },
+      "Балалар массажы": { price: 2500, from: true },
+      "Үйге дәрігер шақыру": { price: 20000 },
+      "ЭКГ": { price: 2000, priceTo: 6000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: ["Рентген", "Холтер мониторингі", "Кардиолог", "Ревматолог", "Эндоскопия"]
+  },
+  {
+    id: 73,
+    name: "ALDIMED медицинский центр",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Гоголь көшесі, 57, Қарағанды",
+    phone: "+7 778 555-27-58",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Жалпы диагностика"]
+  },
+  {
+    id: 74,
+    name: "DiVera Аллергология",
+    subtitle: "Аллергологический медицинский центр",
+    city: "karaganda",
+    address: "Терешкова көшесі, 29, Қарағанды",
+    phone: "+7 775 007-83-76",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Аллерголог қабылдауы": { price: 10000, priceTo: 20000 },
+    },
+    otherServices: ["Аллергология", "Иммунология", "Диагностика"]
+  },
+  {
+    id: 75,
+    name: "МФ Гиппократ",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Ерубаев көшесі, 8, Қарағанды",
+    phone: "+7 7212 92-20-02",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Көпсалалы медициналық орталық"]
+  },
+  {
+    id: 76,
+    name: "SAK Clinic",
+    subtitle: "Медициналық орталық",
+    city: "karaganda",
+    address: "Абай көшесі, 81, Қарағанды",
+    phone: "+7 776 020-21-40",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Жалпы медицина", "Диагностика"]
+  },
+  {
+    id: 77,
+    name: "Diagnostic",
+    subtitle: "Диагностикалық орталық",
+    city: "karaganda",
+    address: "Крылов көшесі, 20, Қарағанды",
+    phone: "+7 776 149-68-96",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "МРТ": { price: 20000, priceTo: 60000 },
+      "КТ": { price: 18000, priceTo: 45000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: ["Диагностикалық зерттеулер", "Медициналық тексерулер"]
+  },
+  {
+    id: 78,
+    name: "Жемчужина Стомед",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Майлин көшесі, 79, Қостанай",
+    phone: "+7 7142 54-66-22",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Зертхана", "Стоматология"]
+  },
+  {
+    id: 79,
+    name: "Поликлиника №3",
+    subtitle: "Жалпы медицина",
+    city: "kostanay",
+    address: "5-ықшамаудан, Қостанай",
+    phone: "+7 7142 26-43-91",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+    },
+    otherServices: ["Педиатрия", "Диагностика"]
+  },
+  {
+    id: 80,
+    name: "Kostanay Plaza Medical",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 775 555-77-55",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Эндокринолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: []
+  },
+  {
+    id: 81,
+    name: "Олимп Диагностика",
+    subtitle: "Диагностикалық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 39-99-99",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+      "Биохимиялық анализ": { price: 5000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: ["ПЦР тесттер"]
+  },
+  {
+    id: 82,
+    name: "INVIVO",
+    subtitle: "Зертханалық диагностика",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 57-88-88",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 2000, priceTo: 6000 },
+      "Биохимиялық анализ": { price: 5000, priceTo: 20000 },
+    },
+    otherServices: ["Зертханалық диагностиканың барлық түрлері"]
+  },
+  {
+    id: 83,
+    name: "DiVera Қостанай",
+    subtitle: "Аллергология орталығы",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 775 007-83-77",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Аллерголог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Аллергология", "Иммунология"]
+  },
+  {
+    id: 84,
+    name: "Медицинский центр Здоровье",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 28-44-44",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: []
+  },
+  {
+    id: 85,
+    name: "Медицинский центр Vita",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 50-11-11",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Гинеколог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Терапевт қабылдауы": { price: 8000, priceTo: 15000 },
+      "УДЗ": { price: 6000, priceTo: 15000 },
+    },
+    otherServices: []
+  },
+  {
+    id: 86,
+    name: "Медицинский центр Долголетие",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 57-55-55",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Кардиолог қабылдауы": { price: 10000, priceTo: 20000 },
+      "Невролог қабылдауы": { price: 10000, priceTo: 20000 },
+    },
+    otherServices: ["Диагностика"]
+  },
+  {
+    id: 87,
+    name: "Эскулап",
+    subtitle: "Медициналық орталық",
+    city: "kostanay",
+    address: "Қостанай (мекенжай нақтыланбаған)",
+    phone: "+7 7142 39-10-10",
+    phoneNote: "",
+    is247: false,
+    services: {
+      "Мамандар қабылдауы": { price: 8000, priceTo: 15000 },
+    },
+    otherServices: ["Көпсалалы медициналық қызметтер"]
+  },
+
+  // ── ПАВЛОДАР ──
+  {
+    id: 88, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "pavlodar", address: "Ленина көшесі, 143, Павлодар",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Биохимиялық анализ (кешенді)": { price: 13600 },
+      "Қалқанша без гормондары (стандарт)": { price: 8080 },
+    },
+    otherServices: ["ПЦР", "Гормоналдық зерттеулер", "Иммунология", "Аллергология", "Генетика"]
+  },
+  {
+    id: 89, name: "HELIX", subtitle: "Медициналық зертхана",
+    city: "pavlodar", address: "Академик Сатпаев көшесі, 19, Павлодар",
+    phone: "+7 708 238-99-72", phoneNote: "", instagram: "helix.kazakhstan", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3800 },
+      "Қалқанша без (ТТГ+Т4)": { price: 4100 },
+      "Скрытая анемия (кешенді)": { price: 9990, from: true },
+    },
+    otherServices: ["Витаминдер", "Гормондар", "ЖЖПИ", "Аллергология"]
+  },
+
+  // ── СЕМЕЙ ──
+  {
+    id: 90, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "semey", address: "Шәкәрім даңғылы, 97А, Семей",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Биохимиялық анализ (кешенді)": { price: 13600 },
+      "ВИЧ+Гепатит+Сифилис": { price: 12660 },
+    },
+    otherServices: ["ПЦР", "Гормоналдық зерттеулер", "Коагулограмма"]
+  },
+  {
+    id: 91, name: "INVITRO", subtitle: "Медициналық зертхана",
+    city: "semey", address: "Дулатов көшесі, 189, Семей",
+    phone: "+7 707 258-58-88", phoneNote: "", instagram: "invitro.kz", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+лейкоформула+СОЭ)": { price: 0, from: true },
+      "Биохимия (15 көрсеткіш)": { price: 0, from: true },
+    },
+    otherServices: ["Баға invitro.kz сайтында нақтыланады", "Гормондар", "Аллергология", "ПЦР"]
+  },
+
+  // ── ПЕТРОПАВЛ ──
+  {
+    id: 92, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "petropavlovsk", address: "Мир даңғылы, 60, Петропавл",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Қалқанша без гормондары (стандарт)": { price: 8080 },
+      "Кардиориск (стандарт)": { price: 6800 },
+    },
+    otherServices: ["ПЦР", "Коагулограмма", "Онкомаркерлер"]
+  },
+  {
+    id: 93, name: "HELIX", subtitle: "Медициналық зертхана",
+    city: "petropavlovsk", address: "Конституция Казахстана даңғылы, 23, Петропавл",
+    phone: "+7 708 238-99-72", phoneNote: "", instagram: "helix.kazakhstan", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3800 },
+      "Қалқанша без (ТТГ+Т4)": { price: 4100 },
+    },
+    otherServices: ["Витаминдер", "Гормондар", "Аллергология"]
+  },
+
+  // ── ТАРАЗ ──
+  {
+    id: 94, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "taraz", address: "Тауелсіздік даңғылы, 56, Тараз",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Биохимиялық анализ (кешенді)": { price: 13600 },
+      "Чек-ап (жалпы)": { price: 82720 },
+    },
+    otherServices: ["ПЦР", "Гормондар", "Онкомаркерлер", "Иммунология"]
+  },
+  {
+    id: 95, name: "INVITRO", subtitle: "Медициналық зертхана",
+    city: "taraz", address: "Толе би көшесі, 63, Тараз",
+    phone: "+7 707 258-58-88", phoneNote: "", instagram: "invitro.kz", is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 0, from: true },
+      "Гормоналдық зерттеулер": { price: 0, from: true },
+    },
+    otherServices: ["Баға invitro.kz сайтында нақтыланады", "ПЦР", "Аллергология"]
+  },
+
+  // ── ТАЛДЫҚОРҒАН ──
+  {
+    id: 96, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "taldykorgan", address: "Жансугуров көшесі, 85, Талдықорған",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Биохимиялық анализ": { price: 13600 },
+      "Қалқанша без (стандарт)": { price: 8080 },
+    },
+    otherServices: ["ПЦР", "Гормондар", "Иммунология"]
+  },
+  {
+    id: 97, name: "HELIX", subtitle: "Медициналық зертхана",
+    city: "taldykorgan", address: "Абай даңғылы, 143, Талдықорған",
+    phone: "+7 708 238-99-72", phoneNote: "", instagram: "helix.kazakhstan", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3800 },
+      "Скрытая анемия кешені": { price: 9990, from: true },
+    },
+    otherServices: ["Витаминдер", "Гормондар", "Аллергология"]
+  },
+
+  // ── ҚЫЗЫЛОРДА ──
+  {
+    id: 98, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "kyzylorda", address: "Абай даңғылы, 12, Қызылорда",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "ВИЧ+Гепатит+Сифилис": { price: 12660 },
+      "Кардиориск (стандарт)": { price: 6800 },
+    },
+    otherServices: ["ПЦР", "Биохимия", "Онкомаркерлер"]
+  },
+  {
+    id: 99, name: "INVITRO", subtitle: "Медициналық зертхана",
+    city: "kyzylorda", address: "Айтеке би даңғылы, 29, Қызылорда",
+    phone: "+7 707 258-58-88", phoneNote: "", instagram: "invitro.kz", is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 0, from: true },
+      "Биохимиялық анализ": { price: 0, from: true },
+    },
+    otherServices: ["Баға invitro.kz сайтында нақтыланады", "ПЦР", "Гормондар"]
+  },
+
+  // ── ТҮРКІСТАН ──
+  {
+    id: 100, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "turkistan", address: "Қожа Ахмет Яссауи даңғылы, 24, Түркістан",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Биохимиялық анализ": { price: 13600 },
+      "Чек-ап (жалпы)": { price: 82720 },
+    },
+    otherServices: ["ПЦР", "Гормондар", "Иммунология", "Аллергология"]
+  },
+  {
+    id: 101, name: "HELIX", subtitle: "Медициналық зертхана",
+    city: "turkistan", address: "Тұран даңғылы, 17, Түркістан",
+    phone: "+7 708 238-99-72", phoneNote: "", instagram: "helix.kazakhstan", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3800 },
+      "Қалқанша без (ТТГ+Т4)": { price: 4100 },
+    },
+    otherServices: ["Витаминдер", "Аллергология", "ПЦР"]
+  },
+
+  // ── КӨКШЕТАУ ──
+  {
+    id: 102, name: "КДЛ Олимп", subtitle: "Клинико-диагностическая лаборатория",
+    city: "kokshetau", address: "Абылай хан даңғылы, 36, Көкшетау",
+    phone: "+7 702 052-8585", phoneNote: "", instagram: "kdlolymp", is247: false,
+    services: {
+      "Жалпы қан анализі (ОАК+СОЭ)": { price: 3980 },
+      "Кардиориск (стандарт)": { price: 6800 },
+      "ВИЧ+Гепатит+Сифилис": { price: 12660 },
+    },
+    otherServices: ["ПЦР", "Биохимия", "Гормондар", "Онкомаркерлер"]
+  },
+  {
+    id: 103, name: "INVITRO", subtitle: "Медициналық зертхана",
+    city: "kokshetau", address: "Уалиханов көшесі, 74, Көкшетау",
+    phone: "+7 707 258-58-88", phoneNote: "", instagram: "invitro.kz", is247: false,
+    services: {
+      "Жалпы қан анализі": { price: 0, from: true },
+      "Гормоналдық зерттеулер": { price: 0, from: true },
+    },
+    otherServices: ["Баға invitro.kz сайтында нақтыланады", "ПЦР", "Аллергология"]
+  },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let currentQuery = '';
+let currentResults = [];
+let compareList = [];
+
+// ── HERO QUICK TAGS (генерируются по городу) ────────────────────────────
+function rebuildHeroTags() {
+  const city = document.getElementById('citySelect').value;
+  const cityClinics = CLINICS.filter(c => c.city === city);
+  const allServices = [...new Set(cityClinics.flatMap(c => Object.keys(c.services)))];
+  const wrap = document.getElementById('heroTags');
+  wrap.innerHTML = allServices.slice(0, 5).map(s => {
+    const shortLabel = s.length > 28 ? s.split(' (')[0] : s;
+    return `<span class="hero-tag" onclick="quickSearch('${s.replace(/'/g, "\\'")}')">${shortLabel}</span>`;
+  }).join('');
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────
+function quickSearch(q) {
+  document.getElementById('mainSearch').value = q;
+  doSearch();
+}
+
+function onCityChange() {
+  closeFilters();
+  rebuildHeroTags();
+  if (currentQuery) {
+    doSearch();
+  }
+}
+
+function doSearch() {
+  const q = document.getElementById('mainSearch').value.trim();
+  if (!q) return;
+  currentQuery = q;
+  document.getElementById('initialState').style.display = 'none';
+  document.getElementById('loadingSkeleton').style.display = 'block';
+  document.getElementById('resultsList').innerHTML = '';
+  document.getElementById('noResults').style.display = 'none';
+
+  setTimeout(() => {
+    document.getElementById('loadingSkeleton').style.display = 'none';
+    const results = searchClinics(q);
+    currentResults = results;
+    renderResults(results);
+  }, 400);
+}
+
+function searchClinics(q) {
+  const lq = q.toLowerCase();
+  const city = document.getElementById('citySelect').value;
+  return CLINICS.filter(c => {
+    if (c.city !== city) return false;
+    return Object.keys(c.services).some(s => s.toLowerCase().includes(lq) || lq.split(' ').some(w => w.length > 2 && s.toLowerCase().includes(w)));
+  }).map(c => {
+    const matchedService = Object.entries(c.services).find(([s]) => s.toLowerCase().includes(lq) || lq.split(' ').some(w => w.length > 2 && s.toLowerCase().includes(w)));
+    return { ...c, matchedService: matchedService ? matchedService[0] : Object.keys(c.services)[0], matchedPrice: matchedService ? matchedService[1] : Object.values(c.services)[0] };
+  });
+}
+
+function renderResults(results) { applyFilters(results); }
+
+function priceDisplay(p) {
+  if (p.price === 0) return 'Баға нақтыланады';
+  if (p.priceTo) return `${p.price.toLocaleString()}–${p.priceTo.toLocaleString()} ₸`;
+  if (p.from) return `${p.price.toLocaleString()} ₸-тан`;
+  return `${p.price.toLocaleString()} ₸`;
+}
+function priceSortValue(p) { return p.price; }
+
+function applyFilters(inputResults) {
+  let results = inputResults || currentResults;
+
+  const minPrice = parseInt(document.getElementById('priceMin').value) || 0;
+  const maxPrice = parseInt(document.getElementById('priceMax').value) || Infinity;
+  const only247 = document.getElementById('filter247').checked;
+
+  let filtered = results.filter(c => {
+    const price = c.matchedPrice.price;
+    if (price < minPrice || price > maxPrice) return false;
+    if (only247 && !c.is247) return false;
+    return true;
+  });
+
+  const sort = document.getElementById('sortSelect').value;
+  if (sort === 'price') filtered.sort((a,b) => priceSortValue(a.matchedPrice) - priceSortValue(b.matchedPrice));
+  else if (sort === 'price-desc') filtered.sort((a,b) => priceSortValue(b.matchedPrice) - priceSortValue(a.matchedPrice));
+
+  const minPriceVal = filtered.length ? Math.min(...filtered.filter(c=>c.matchedPrice.price).map(c => priceSortValue(c.matchedPrice))) : 0;
+  const maxPriceVal = filtered.length ? Math.max(...filtered.filter(c=>c.matchedPrice.price).map(c => priceSortValue(c.matchedPrice))) : 0;
+
+  const list = document.getElementById('resultsList');
+  const noRes = document.getElementById('noResults');
+  const count = document.getElementById('resultsCount');
+
+  const filterBtn = document.getElementById('filterToggleBtn');
+  const filtersActive = minPrice > 0 || maxPrice < Infinity || only247;
+  filterBtn.classList.toggle('active-filter', filtersActive);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '';
+    noRes.style.display = 'block';
+    count.innerHTML = 'Ничего не найдено';
+    return;
+  }
+  noRes.style.display = 'none';
+
+  // Add locate me button in results header if not yet
+  const locateBtn = document.getElementById('locateMeBtn');
+  if (!locateBtn) {
+    count.insertAdjacentHTML('afterend', '<button id="locateMeBtn" onclick="locateMe()" style="background:none;border:1px solid var(--brd);border-radius:9px;padding:6px 11px;font-size:12px;font-weight:600;color:var(--slate);cursor:pointer;margin-top:6px;display:inline-flex;align-items:center;gap:5px;">📍 Маған жақын қалаға ауыс</button>');
+  }
+
+  count.innerHTML = `<strong>${filtered.length}</strong> клиника табылды`;
+
+  list.innerHTML = filtered.map(c => {
+    const isBest = c.matchedPrice.price && priceSortValue(c.matchedPrice) === minPriceVal;
+    const isCompared = compareList.includes(c.id);
+    const allServices = Object.entries(c.services);
+    const inCart = cartItems.some(i => i.clinicId === c.id && i.serviceName === c.matchedService);
+    const cPrice = c.matchedPrice.price;
+
+    return `
+    <div class="clinic-card${isBest ? ' best-value' : ''}" id="card-${c.id}">
+      ${isBest ? '<div class="best-badge">✓ Ең қолайлы баға</div>' : ''}
+      <div class="card-top">
+        <div class="clinic-info">
+          <div class="clinic-name">${c.name}</div>
+          <div class="clinic-meta">
+            <span class="verified-badge">✅ Тексерілген</span>
+            ${c.is247 ? '<span class="badge-247">24/7</span>' : ''}
+          </div>
+          <div style="margin-top:6px;font-size:12px;color:var(--slate)">${c.subtitle}</div>
+          <div style="margin-top:6px;font-size:12px;color:var(--slate)">📍 ${c.address}</div>
+          ${cPrice && !isBest ? getSavingsBadge(cPrice, maxPriceVal) : ''}
+        </div>
+        <div class="price-block">
+          <div class="price-main">${priceDisplay(c.matchedPrice)}</div>
+          <div class="price-label">${c.matchedService}</div>
+        </div>
+      </div>
+
+      ${cPrice && minPriceVal !== maxPriceVal ? getPriceBar(cPrice, minPriceVal, maxPriceVal) : ''}
+
+      <div class="card-services">
+        <div class="services-label">Прайс бойынша қызметтер</div>
+        <div class="service-rows">
+          ${allServices.map(([name, info]) => {
+            const inC = cartItems.some(i => i.clinicId === c.id && i.serviceName === name);
+            return `<div class="service-row">
+              <span class="service-name">${name}</span>
+              <span style="display:flex;align-items:center;gap:6px">
+                <span class="service-price">${priceDisplay(info)}</span>
+                <button onclick="addToCart(${c.id},'${name.replace(/'/g,"\\'")}',${info.price||0},'${c.name.replace(/'/g,"\\'")}');event.stopPropagation()"
+                  style="background:none;border:1px solid ${inC?'var(--red)':'var(--brd)'};color:${inC?'var(--red)':'var(--slate)'};border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;white-space:nowrap">
+                  ${inC ? '✕' : '+'}
+                </button>
+              </span>
+            </div>`;
+          }).join('')}
+        </div>
+        ${c.otherServices && c.otherServices.length ? `<div class="price-note" style="margin-top:8px">Сонымен қатар: ${c.otherServices.join(', ')} (баға клиникада нақтыланады)</div>` : ''}
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" onclick="openBooking(${c.id})">📞 Записаться</button>
+        <button class="btn-secondary${inCart?' is-active':''}" onclick="addToCart(${c.id},'${c.matchedService.replace(/'/g,"\\'")}',${cPrice||0},'${c.name.replace(/'/g,"\\'")}')">
+          ${inCart ? '✕ Себеттен алу' : '🛒 Себетке қос'}
+        </button>
+        <button class="btn-secondary${isCompared ? ' is-active' : ''}" id="cmp-${c.id}" onclick="toggleCompare(${c.id})">${isCompared ? '✓' : '⚖'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function sortResults() { applyFilters(); }
+
+// ── FILTERS ──────────────────────────────────────────────────────────
+function openFilters() {
+  document.getElementById('filtersPanel').classList.add('open');
+  document.getElementById('filtersOverlay').classList.add('open');
+}
+function closeFilters() {
+  document.getElementById('filtersPanel').classList.remove('open');
+  document.getElementById('filtersOverlay').classList.remove('open');
+}
+function applyFiltersAndClose() {
+  if (currentResults.length) applyFilters();
+  closeFilters();
+}
+
+// ── COMPARE ──────────────────────────────────────────────────────────
+function toggleCompare(id) {
+  const idx = compareList.indexOf(id);
+  if (idx === -1) {
+    if (compareList.length >= 4) { alert('Можно сравнивать до 4 клиник'); return; }
+    compareList.push(id);
+  } else {
+    compareList.splice(idx, 1);
+  }
+  updateCompareBar();
+  const btn = document.getElementById(`cmp-${id}`);
+  if (btn) {
+    const active = compareList.includes(id);
+    btn.textContent = active ? '✓ В сравнении' : '⚖ Сравнить';
+    btn.classList.toggle('is-active', active);
+  }
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById('compareBar');
+  document.getElementById('compareCount').textContent = compareList.length;
+  bar.classList.toggle('visible', compareList.length > 1);
+}
+
+function clearCompare() {
+  compareList = [];
+  updateCompareBar();
+  document.querySelectorAll('[id^="cmp-"]').forEach(btn => { btn.textContent = '⚖ Сравнить'; btn.classList.remove('is-active'); });
+}
+
+function goCompare() {
+  switchView('compare');
+  renderCompare();
+}
+
+function renderCompare() {
+  const content = document.getElementById('compareContent');
+  if (compareList.length < 2) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-title">Добавьте минимум 2 клиники</div><div class="empty-sub">Вернитесь к поиску и нажмите «Сравнить»</div></div>`;
+    return;
+  }
+  const clinics = compareList.map(id => CLINICS.find(c => c.id === id));
+  const serviceNames = [...new Set(clinics.flatMap(c => Object.keys(c.services)))];
+
+  content.innerHTML = `
+    <div class="compare-title">Сравнение клиник</div>
+    <div class="compare-table-wrap">
+    <table class="compare-table">
+      <tr>
+        <th>Параметр</th>
+        ${clinics.map(c => `<th>${c.name}</th>`).join('')}
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:var(--slate)">Город</td>
+        ${clinics.map(c => `<td>${CITY_NAMES[c.city]}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:var(--slate)">Адрес</td>
+        ${clinics.map(c => `<td>${c.address}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:var(--slate)">Режим работы</td>
+        ${clinics.map(c => `<td>${c.is247 ? '24/7' : '—'}</td>`).join('')}
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:var(--slate)">Телефон</td>
+        ${clinics.map(c => `<td>${c.phone}</td>`).join('')}
+      </tr>
+      ${serviceNames.map(svc => {
+        const prices = clinics.map(c => c.services[svc] || null);
+        const valid = prices.filter(Boolean).map(p => p.price);
+        const minP = valid.length ? Math.min(...valid) : null;
+        return `<tr>
+          <td style="font-weight:700;color:var(--slate)">${svc}</td>
+          ${prices.map(p => p ? `<td class="${p.price === minP ? 'compare-winner' : ''}">${priceDisplay(p)} ${p.price === minP ? '<span class="win-badge">Дешевле</span>' : ''}</td>` : '<td style="color:#C7D2DB">—</td>').join('')}
+        </tr>`;
+      }).join('')}
+    </table></div>`;
+}
+
+// ── VIEW SWITCHER ─────────────────────────────────────────────────────
+function switchView(v) {
+  document.getElementById('view-search').style.display = v === 'search' ? 'block' : 'none';
+  document.getElementById('view-compare').style.display = v === 'compare' ? 'block' : 'none';
+  document.getElementById('view-ai').style.display = v === 'ai' ? 'block' : 'none';
+
+  document.querySelectorAll('.top-link, .bn-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-view') === v);
+  });
+
+  if (v === 'compare') renderCompare();
+  closeFilters();
+}
+
+// ── BOOKING MODAL ────────────────────────────────────────────────────
+function openBooking(id) {
+  const clinic = CLINICS.find(c => c.id === id);
+  const result = currentResults.find(c => c.id === id);
+  const serviceName = (result && result.matchedService) || Object.keys(clinic.services)[0];
+  const priceInfo = (result && result.matchedPrice) ? result.matchedPrice : Object.values(clinic.services)[0];
+
+  const digits = clinic.phone.replace(/[^\d]/g, '');
+  const waMsg = encodeURIComponent(`Сәлеметсіз бе! ${clinic.name} клиникасына «${serviceName}» қызметіне жазылғым келеді (баға: ${priceDisplay(priceInfo)}, MedPrice KZ арқылы тауып отырмын).`);
+  const mapsQuery = encodeURIComponent(`${clinic.name}, ${clinic.address}`);
+  const hasPhone = digits.length > 6;
+
+  const phoneRow = hasPhone
+    ? `<div class="booking-info-row">
+        <div class="booking-info-icon">📞</div>
+        <div class="booking-info-text">
+          <div class="booking-info-label">Телефон</div>
+          ${clinic.phone}${clinic.phoneNote ? ' · ' + clinic.phoneNote : ''}
+        </div>
+      </div>`
+    : `<div class="booking-info-row">
+        <div class="booking-info-icon">📞</div>
+        <div class="booking-info-text">
+          <div class="booking-info-label">Телефон</div>
+          <span style="color:var(--slate)">${clinic.phoneNote}</span>
+        </div>
+      </div>`;
+
+  const igHandle = clinic.instagram || '';
+  const igUrl = igHandle ? `https://www.instagram.com/${igHandle}/` : '';
+  const igRow = igHandle ? `<div class="booking-info-row">
+      <div class="booking-info-icon">📸</div>
+      <div class="booking-info-text">
+        <div class="booking-info-label">Instagram</div>
+        @${igHandle}
+      </div>
+    </div>` : '';
+
+  const actionBtns = hasPhone
+    ? `<div class="booking-actions">
+        <a class="booking-btn call" href="tel:+${digits}">📞 Қоңырау шалу</a>
+        ${igHandle
+          ? `<a class="booking-btn instagram" href="${igUrl}" target="_blank" rel="noopener">📸 Instagram</a>`
+          : ''
+        }
+      </div>`
+    : `<div style="background:var(--surface);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--slate);margin-top:14px">
+        📍 Телефон нақтыланбаған. Клиника мекенжайына барып немесе картада іздеп хабарласыңыз.
+      </div>`;
+
+  document.getElementById('bookingContent').innerHTML = `
+    <div class="booking-clinic-name">${clinic.name}</div>
+    <div class="work-hours">
+      ${clinic.is247 ? '<span class="badge-247" style="margin-right:2px">24/7</span> Тәулік бойы жұмыс істейді' : '<span class="verified-badge">✅ Тексерілген</span>'}
+    </div>
+
+    <div class="booking-service-row">
+      <div class="booking-service-name">${serviceName}</div>
+      <div class="booking-service-price">${priceDisplay(priceInfo)}</div>
+    </div>
+
+    <div class="booking-info-row">
+      <div class="booking-info-icon">📍</div>
+      <div class="booking-info-text">
+        <div class="booking-info-label">Мекенжай</div>
+        ${clinic.address}
+      </div>
+    </div>
+    ${phoneRow}
+    ${igRow}
+    ${actionBtns}
+    <div class="booking-maps-row">
+      <a class="booking-btn maps" href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" rel="noopener">🗺️ Картадан көру</a>
+    </div>
+
+    <div class="booking-note">Деректер клиниканың ашық прайсы бойынша расталған. Дәл баға қабылдау түрі мен дәрігердің санатына байланысты өзгеруі мүмкін — нақтылау үшін қоңырау шалыңыз.</div>
+  `;
+
+  document.getElementById('bookingModal').classList.add('open');
+  document.getElementById('bookingOverlay').classList.add('open');
+}
+
+function closeBooking() {
+  document.getElementById('bookingModal').classList.remove('open');
+  document.getElementById('bookingOverlay').classList.remove('open');
+}
+
+// ── REAL AI (Claude API) ──────────────────────────────────────────────
+function buildSystemPrompt() {
+  const cityKey = document.getElementById('citySelect').value;
+  const cityName = CITY_NAMES[cityKey] || cityKey;
+  const cityClinics = CLINICS.filter(c => c.city === cityKey);
+
+  const clinicData = cityClinics.map(c => {
+    const svcs = Object.entries(c.services)
+      .map(([name, info]) => `${name}: ${priceDisplay(info)}`)
+      .join(', ');
+    return `• ${c.name} (${c.subtitle || 'клиника'})${c.is247 ? ' [24/7]' : ''}: ${c.address} | Тел: ${c.phone} | Қызметтер: ${svcs}${c.otherServices?.length ? ' + ' + c.otherServices.join(', ') : ''}`;
+  }).join('\n');
+
+  return `Сен MedPrice KZ — Қазақстандағы медициналық қызметтер бағасын салыстыратын платформаның AI-советнигісің.
+
+Ағымдағы қала: ${cityName}
+Базадағы ${cityClinics.length} клиника:
+${clinicData}
+
+Ережелер:
+- Пайдаланушы сұраған қызмет бойынша ең арзан немесе ең сапалы нұсқаны нақты атаумен, бағамен, мекенжаймен, телефонмен ұсын
+- Егер пайдаланушы басқа қала туралы сұраса, деректер тек ${cityName} үшін екенін айт
+- Қазақша сұралса — қазақша, орысша сұралса — орысша жауап бер
+- Жауап қысқа, нақты, 2-4 сөйлем. Маркдаун белгілерін (** ## және т.б.) қолданба`;
+}
+
+// ── API KEY MANAGEMENT ───────────────────────────────────────────────
+let _apiKey = localStorage.getItem('medprice_apikey') || '';
+
+function saveApiKey() {
+  const val = document.getElementById('apikeyInput').value.trim();
+  const errEl = document.getElementById('apikeyErr');
+  if (!val.startsWith('sk-ant-') && !val.startsWith('sk-')) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  _apiKey = val;
+  localStorage.setItem('medprice_apikey', val);
+  document.getElementById('apikeyOverlay').classList.add('hidden');
+}
+
+// Егер кілт бұрын сақталған болса — модалды жасыр
+(function() {
+  if (_apiKey) {
+    document.getElementById('apikeyOverlay').classList.add('hidden');
+  }
+})();
+
+const AI_HISTORY = {};
+
+async function callAI(messagesContainerId, inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(btnId);
+  const messagesEl = document.getElementById(messagesContainerId);
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  addMessage(messagesContainerId, msg, 'user');
+  input.value = '';
+  btn.disabled = true;
+
+  const thinkId = 'think-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  messagesEl.insertAdjacentHTML('beforeend',
+    `<div class="ai-msg bot" id="${thinkId}"><div class="msg-avatar bot">AI</div><div class="ai-thinking"><span></span><span></span><span></span></div></div>`);
+  scrollMessages(messagesContainerId);
+
+  // Build conversation history for multi-turn
+  if (!AI_HISTORY[messagesContainerId]) AI_HISTORY[messagesContainerId] = [];
+  AI_HISTORY[messagesContainerId].push({ role: 'user', content: msg });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': _apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: buildSystemPrompt(),
+        messages: AI_HISTORY[messagesContainerId].slice(-10)
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      const el = document.getElementById(thinkId);
+      if (el) el.remove();
+      if (data.error.type === 'authentication_error') {
+        // Кілт жарамсыз — қайта сұра
+        _apiKey = '';
+        localStorage.removeItem('medprice_apikey');
+        document.getElementById('apikeyOverlay').classList.remove('hidden');
+        addMessage(messagesContainerId, '⚠️ API кілті жарамсыз. Жаңа кілт енгізіңіз.', 'bot');
+      } else if (data.error.type === 'overloaded_error') {
+        addMessage(messagesContainerId, '⚠️ AI сервері қазір жүктелген. 10 секунд күтіп, қайта жіберіңіз.', 'bot');
+      } else if (data.error.type === 'rate_limit_error') {
+        addMessage(messagesContainerId, '⚠️ Сұраныс лимиті толды. Аздап күтіңіз.', 'bot');
+      } else {
+        addMessage(messagesContainerId, `⚠️ Қате: ${data.error.message}`, 'bot');
+      }
+      btn.disabled = false;
+      input.focus();
+      return;
+    }
+
+    const text = data.content?.[0]?.text || 'Кешіріңіз, жауап алу мүмкін болмады. Қайта көріңіз.';
+    AI_HISTORY[messagesContainerId].push({ role: 'assistant', content: text });
+    const el = document.getElementById(thinkId);
+    if (el) el.remove();
+    addMessage(messagesContainerId, text, 'bot');
+  } catch (err) {
+    const el = document.getElementById(thinkId);
+    if (el) el.remove();
+    addMessage(messagesContainerId, `⚠️ Қате орын алды: ${err.message}`, 'bot');
+  }
+
+  btn.disabled = false;
+  input.focus();
+}
+
+function sendAI() { callAI('aiMessages', 'aiInput', 'aiSendBtn'); }
+function sendAI2() { callAI('aiMessages2', 'aiInput2', 'aiSendBtn2'); }
+
+function addMessage(containerId, text, role) {
+  const container = document.getElementById(containerId);
+  const safeText = text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+  const avatar = role === 'bot' ? '<div class="msg-avatar bot">AI</div>' : '<div class="msg-avatar">Мен</div>';
+  container.insertAdjacentHTML('beforeend',
+    `<div class="ai-msg ${role}">${avatar}<div class="msg-bubble">${safeText}</div></div>`);
+  scrollMessages(containerId);
+}
+
+function scrollMessages(id) {
+  const el = document.getElementById(id);
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── DARK MODE ────────────────────────────────────────────────────────
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  document.getElementById('darkBtn').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('medprice_dark', document.body.classList.contains('dark') ? '1' : '');
+}
+if (localStorage.getItem('medprice_dark')) { document.body.classList.add('dark'); document.getElementById('darkBtn').textContent = '☀️'; }
+
+// ── VOICE SEARCH ─────────────────────────────────────────────────────
+let voiceRecog = null;
+let voiceActive = false;
+function toggleVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) { alert('Браузеріңіз дауыстық іздеуді қолдамайды. Chrome-ды қолданыңыз.'); return; }
+  const btn = document.getElementById('voiceBtn');
+  if (voiceActive) {
+    voiceRecog?.stop();
+    voiceActive = false;
+    btn.textContent = '🎤';
+    return;
+  }
+  voiceRecog = new SpeechRecognition();
+  voiceRecog.lang = 'ru-RU';
+  voiceRecog.interimResults = false;
+  voiceRecog.maxAlternatives = 1;
+  voiceRecog.onstart = () => { voiceActive = true; btn.textContent = '🔴'; btn.style.color = 'var(--red)'; };
+  voiceRecog.onresult = e => {
+    const text = e.results[0][0].transcript;
+    document.getElementById('mainSearch').value = text;
+    doSearch();
+  };
+  voiceRecog.onerror = () => { voiceActive = false; btn.textContent = '🎤'; btn.style.color = ''; };
+  voiceRecog.onend = () => { voiceActive = false; btn.textContent = '🎤'; btn.style.color = ''; };
+  voiceRecog.start();
+}
+
+// ── GEOLOCATION ───────────────────────────────────────────────────────
+let userLat = null, userLng = null;
+// Known coords for Kazakh cities (approx center)
+const CITY_COORDS = {
+  almaty:{lat:43.238,lng:76.945}, astana:{lat:51.180,lng:71.446}, shymkent:{lat:42.317,lng:69.596},
+  karaganda:{lat:49.806,lng:73.085}, aktobe:{lat:50.279,lng:57.207}, uralsk:{lat:51.233,lng:51.366},
+  atyrau:{lat:47.107,lng:51.914}, 'ust-kamenogorsk':{lat:49.978,lng:82.628}, aktau:{lat:43.653,lng:51.166},
+  kostanay:{lat:53.214,lng:63.624}, pavlodar:{lat:52.285,lng:76.940}, semey:{lat:50.411,lng:80.226},
+  petropavlovsk:{lat:54.875,lng:69.158}, taraz:{lat:42.900,lng:71.378}, taldykorgan:{lat:45.017,lng:78.370},
+  kyzylorda:{lat:44.852,lng:65.509}, turkistan:{lat:43.298,lng:68.271}, kokshetau:{lat:53.284,lng:69.390},
+};
+function getDistance(lat1,lon1,lat2,lon2) {
+  const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function locateMe() {
+  if (!navigator.geolocation) { alert('Геолокация қолданылмайды'); return; }
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+    // Find nearest city
+    let nearestCity = 'almaty', minDist = Infinity;
+    Object.entries(CITY_COORDS).forEach(([city, coords]) => {
+      const d = getDistance(userLat, userLng, coords.lat, coords.lng);
+      if (d < minDist) { minDist = d; nearestCity = city; }
+    });
+    document.getElementById('citySelect').value = nearestCity;
+    onCityChange();
+    if (currentQuery) renderResults();
+    showToast(`📍 ${CITY_NAMES[nearestCity]} анықталды (${Math.round(minDist)} км)`);
+  }, () => showToast('Геолокацияға рұқсат берілмеді'));
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#16222E;color:#fff;padding:10px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap;max-width:90vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.style.opacity = '0', 2600);
+}
+
+// ── CART ──────────────────────────────────────────────────────────────
+let cartItems = [];
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+}
+function closeCart() {
+  document.getElementById('cartPanel').classList.remove('open');
+}
+function addToCart(clinicId, serviceName, price, clinicName) {
+  const existing = cartItems.findIndex(i => i.clinicId === clinicId && i.serviceName === serviceName);
+  if (existing >= 0) {
+    cartItems.splice(existing, 1);
+    showToast('🗑 Себеттен алынды');
+  } else {
+    cartItems.push({ clinicId, serviceName, price, clinicName });
+    showToast('✅ Себетке қосылды');
+  }
+  renderCart();
+  renderResults();
+}
+function removeFromCart(idx) {
+  cartItems.splice(idx, 1);
+  renderCart();
+  renderResults();
+}
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const total = document.getElementById('cartTotal');
+  const totalPrice = document.getElementById('cartTotalPrice');
+  const badge = document.getElementById('cartBadge');
+  const floatBtn = document.getElementById('cartFloat');
+
+  badge.textContent = cartItems.length;
+  floatBtn.style.display = cartItems.length > 0 ? 'flex' : 'none';
+
+  if (!cartItems.length) {
+    container.innerHTML = '<div class="cart-empty">Себет бос.<br>Карточкадағы «+ Себет» батырмасын басыңыз</div>';
+    total.style.display = 'none';
+    return;
+  }
+
+  const sum = cartItems.reduce((s, i) => s + (i.price || 0), 0);
+  container.innerHTML = cartItems.map((item, idx) => `
+    <div class="cart-item">
+      <button class="cart-item-del" onclick="removeFromCart(${idx})">✕</button>
+      <div class="cart-item-name">${item.serviceName}</div>
+      <div class="cart-item-clinic">${item.clinicName}</div>
+      <div class="cart-item-price">${item.price ? item.price.toLocaleString() + ' ₸' : 'Баға нақтыланады'}</div>
+    </div>`).join('');
+  totalPrice.textContent = sum.toLocaleString() + ' ₸';
+  total.style.display = 'block';
+}
+
+// ── SAVINGS + PRICE BAR helpers ───────────────────────────────────────
+function getSavingsBadge(price, maxPrice) {
+  if (!price || !maxPrice || price === maxPrice) return '';
+  const saved = maxPrice - price;
+  return `<div class="savings-badge">💰 ${saved.toLocaleString()} ₸ үнемдейсің</div>`;
+}
+function getPriceBar(price, minPrice, maxPrice) {
+  if (!price || minPrice === maxPrice) return '';
+  const pct = Math.round(((price - minPrice) / (maxPrice - minPrice)) * 100);
+  const cls = pct <= 30 ? 'cheap' : pct <= 70 ? 'mid' : 'exp';
+  const label = pct <= 30 ? '✅ Ең арзан' : pct <= 70 ? '⚡ Орташа' : '⚠️ Қымбат';
+  return `<div class="price-bar-wrap">
+    <div class="price-bar-label"><span>${label}</span><span>${pct}% арада</span></div>
+    <div class="price-bar-track"><div class="price-bar-fill ${cls}" style="width:${Math.max(pct,4)}%"></div></div>
+  </div>`;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────
+document.getElementById('mainSearch').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+rebuildHeroTags();
+</script>
+</body>
+</html>
